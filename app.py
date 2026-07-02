@@ -7,7 +7,7 @@ import requests
 import re
 
 st.set_page_config(
-    page_title="Klasifikasi Bunga",
+    page_title="Identifikasi Bunga",
     page_icon="🌸",
     layout="centered"
 )
