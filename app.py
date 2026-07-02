@@ -428,7 +428,7 @@ st.markdown("""
     <div style="font-size: 3.5rem; margin-bottom: 0.3rem; letter-spacing: 10px;">
         🌸 🌺 🌷 🌻 🪷
     </div>
-    <h1>Klasifikasi Bunga</h1>
+    <h1>Identifikasi Bunga</h1>
     <p>📸 Upload gambar untuk mengetahui jenis bunganya secara instan</p>
     <span class="badge">🤖 Didukung AI &nbsp;·&nbsp; 5 Jenis Bunga</span>
 </div>
