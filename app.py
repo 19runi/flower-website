@@ -12,40 +12,50 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS dengan Efek Menarik
+# CSS
 st.markdown("""
 <style>
-    /* Import font */
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Quicksand:wght@400;600;700&display=swap');
-    
     /* Background pink soft */
     .stApp {
         background: linear-gradient(135deg, #ffe4e1 0%, #ffd1dc 50%, #ffb6c1 100%);
     }
     
     /* Hilangkan sidebar */
-    .css-1d391kg, .css-1lcbmhc {
-        display: none;
+    .css-1d391kg, .css-1lcbmhc, .stSidebar {
+        display: none !important;
     }
     
-    .stSidebar {
-        display: none;
-    }
-    
-    /* ============ HILANGKAN SEMUA TEKS DI UPLOAD ============ */
-    .stFileUploader {
-        background: transparent !important;
-    }
-    
-    .stFileUploader > div {
-        background: transparent !important;
-        padding: 0 !important;
-    }
-    
+    /* ===== HILANGKAN TEKS DUPLIKAT DI BAWAH UPLOAD ===== */
+    /* Hilangkan semua teks di uploader */
     .stFileUploader > div > div {
         display: none !important;
     }
     
+    .stFileUploader > div > div > div {
+        display: none !important;
+    }
+    
+    .stFileUploader > div > div > div > div {
+        display: none !important;
+    }
+    
+    .stFileUploader > div > div > div > small {
+        display: none !important;
+    }
+    
+    .stFileUploader > div > div > div > div > div {
+        display: none !important;
+    }
+    
+    .stFileUploader small {
+        display: none !important;
+    }
+    
+    .stFileUploader .e1f1d6gn5 {
+        display: none !important;
+    }
+    
+    /* Tombol upload */
     .stFileUploader > div > button {
         font-family: 'Quicksand', sans-serif !important;
         font-weight: 600 !important;
@@ -57,23 +67,11 @@ st.markdown("""
         font-size: 1rem !important;
         transition: all 0.3s ease !important;
         margin: 0.5rem 0 !important;
-        position: relative !important;
-        z-index: 10 !important;
     }
     
     .stFileUploader > div > button:hover {
         transform: scale(1.05) !important;
         box-shadow: 0 4px 20px rgba(232, 138, 158, 0.4) !important;
-    }
-    
-    /* Hilangkan semua teks di dalam button upload */
-    .stFileUploader > div > button > div {
-        display: none !important;
-    }
-    
-    /* Hilangkan semua teks kecil */
-    .stFileUploader small {
-        display: none !important;
     }
     
     /* Header */
@@ -645,7 +643,7 @@ emoji_map = {
     'lotus': '🪷'
 }
 
-# ============ UPLOAD AREA - KOTAK PUTIH ============
+# ============ UPLOAD AREA ============
 st.markdown("""
 <div class="upload-area">
     <p class="main-text">📸 Upload Gambar Bunga</p>
@@ -654,7 +652,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Uploader - semua logika di sini
+# Uploader - teks duplikat di bawah sudah di-hide oleh CSS
 uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
 
 if uploaded:
@@ -689,7 +687,6 @@ if 'hasil' in st.session_state:
     
     emoji = emoji_map.get(nama, '🌸')
     
-    # Result card
     st.markdown(f"""
     <div class="result-box">
         <p class="label">✨ Hasil Klasifikasi</p>
@@ -700,7 +697,6 @@ if 'hasil' in st.session_state:
     </div>
     """, unsafe_allow_html=True)
     
-    # Info card
     info = get_deskripsi(nama)
     if info:
         st.markdown(f"""
@@ -726,7 +722,6 @@ if 'hasil' in st.session_state:
         
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # Prob card
     st.markdown("""
     <div class="prob-card">
         <div class="title-wrapper">
@@ -735,7 +730,6 @@ if 'hasil' in st.session_state:
         </div>
     """, unsafe_allow_html=True)
     
-    # Sort by probability (highest first)
     sorted_indices = np.argsort(prob)[::-1]
     
     for idx in sorted_indices:
@@ -760,7 +754,6 @@ if 'hasil' in st.session_state:
     
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ============ FOOTER ============
 st.markdown("""
 <div class="footer">
     🌸 Selamat mencoba! 🌸
