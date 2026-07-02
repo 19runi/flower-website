@@ -580,14 +580,6 @@ def predict_with_ensemble(model, x, num_augmentations=3):
     return avg_pred
 
 # ============ UPLOAD ============
-st.markdown("""
-<div class="upload-area">
-    <p class="main-text">📸 Upload Gambar Bunga</p>
-    <p class="sub-text">Pilih gambar dari perangkat Anda</p>
-    <p class="info-text">200MB per file • JPG, PNG</p>
-</div>
-""", unsafe_allow_html=True)
-
 uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
 
 if uploaded:
