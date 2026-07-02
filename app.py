@@ -15,18 +15,16 @@ st.set_page_config(
 # CSS
 st.markdown("""
 <style>
-    /* Background pink soft */
     .stApp {
         background: linear-gradient(135deg, #ffe4e1 0%, #ffd1dc 50%, #ffb6c1 100%);
     }
     
-    /* Hilangkan sidebar */
     .css-1d391kg, .css-1lcbmhc, .stSidebar {
         display: none !important;
     }
     
-    /* ===== HILANGKAN TEKS DUPLIKAT DI BAWAH UPLOAD ===== */
-    /* Hilangkan semua teks di uploader */
+    /* ===== CARA PALING AMPUH ===== */
+    /* Sembunyikan SEMUA teks di uploader */
     .stFileUploader > div > div {
         display: none !important;
     }
@@ -51,12 +49,9 @@ st.markdown("""
         display: none !important;
     }
     
-    .stFileUploader .e1f1d6gn5 {
-        display: none !important;
-    }
-    
-    /* Tombol upload */
+    /* Tampilkan hanya tombolnya */
     .stFileUploader > div > button {
+        display: inline-block !important;
         font-family: 'Quicksand', sans-serif !important;
         font-weight: 600 !important;
         background: linear-gradient(135deg, #e88a9e, #d4708a) !important;
@@ -65,13 +60,15 @@ st.markdown("""
         border: none !important;
         padding: 0.7rem 2rem !important;
         font-size: 1rem !important;
-        transition: all 0.3s ease !important;
         margin: 0.5rem 0 !important;
     }
     
     .stFileUploader > div > button:hover {
         transform: scale(1.05) !important;
-        box-shadow: 0 4px 20px rgba(232, 138, 158, 0.4) !important;
+    }
+    
+    .stFileUploader > div > button > div {
+        display: none !important;
     }
     
     /* Header */
@@ -173,7 +170,6 @@ st.markdown("""
         background: linear-gradient(135deg, #d4708a, #c05d78);
     }
     
-    /* Image preview */
     .image-preview {
         border-radius: 20px;
         overflow: hidden;
@@ -182,51 +178,20 @@ st.markdown("""
         margin: 1.5rem 0;
     }
     
-    /* Result box */
     .result-box {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,240,245,0.95));
         padding: 2.5rem 2rem;
         border-radius: 30px;
         text-align: center;
-        box-shadow: 0 10px 40px rgba(255, 182, 193, 0.4), 
-                    inset 0 1px 0 rgba(255,255,255,0.8);
+        box-shadow: 0 10px 40px rgba(255, 182, 193, 0.4);
         margin: 1.5rem 0;
-        backdrop-filter: blur(10px);
         border: 2px solid rgba(255, 255, 255, 0.6);
-        position: relative;
-        overflow: hidden;
         animation: fadeInUp 0.6s ease;
     }
     
-    .result-box::before {
-        content: '🌸';
-        position: absolute;
-        font-size: 8rem;
-        opacity: 0.05;
-        top: -20px;
-        right: -20px;
-        transform: rotate(15deg);
-    }
-    
-    .result-box::after {
-        content: '🌺';
-        position: absolute;
-        font-size: 6rem;
-        opacity: 0.05;
-        bottom: -20px;
-        left: -20px;
-        transform: rotate(-10deg);
-    }
-    
     @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
     }
     
     @keyframes pulse {
@@ -249,8 +214,6 @@ st.markdown("""
         letter-spacing: 4px;
         text-transform: uppercase;
         opacity: 0.7;
-        position: relative;
-        z-index: 1;
     }
     
     .result-box .name {
@@ -263,9 +226,6 @@ st.markdown("""
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         animation: shimmer 3s linear infinite;
-        position: relative;
-        z-index: 1;
-        text-shadow: none;
         letter-spacing: 3px;
     }
     
@@ -275,8 +235,6 @@ st.markdown("""
         padding: 0.5rem 2.5rem;
         border-radius: 50px;
         box-shadow: 0 4px 20px rgba(232, 138, 158, 0.4);
-        position: relative;
-        z-index: 1;
         animation: pulse 2s ease-in-out infinite;
     }
     
@@ -289,28 +247,13 @@ st.markdown("""
         margin: 0;
     }
     
-    /* Info card */
     .info-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,250,0.95));
         padding: 1.8rem;
         border-radius: 25px;
         box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
         margin: 1.2rem 0;
-        backdrop-filter: blur(10px);
         border: 2px solid rgba(255, 255, 255, 0.6);
-        position: relative;
-        overflow: hidden;
-        animation: fadeInUp 0.7s ease;
-    }
-    
-    .info-card::before {
-        content: '🌿';
-        position: absolute;
-        font-size: 6rem;
-        opacity: 0.05;
-        top: -10px;
-        right: -10px;
-        transform: rotate(20deg);
     }
     
     .info-card .title-wrapper {
@@ -318,10 +261,6 @@ st.markdown("""
         align-items: center;
         gap: 12px;
         margin-bottom: 0.5rem;
-    }
-    
-    .info-card .title-icon {
-        font-size: 2rem;
     }
     
     .info-card .title {
@@ -348,12 +287,6 @@ st.markdown("""
         font-size: 1rem;
         margin: 0;
         font-weight: 600;
-    }
-    
-    .info-card .latin .label {
-        font-style: normal;
-        opacity: 0.6;
-        font-weight: 400;
     }
     
     .fact {
@@ -399,28 +332,13 @@ st.markdown("""
         margin-right: 5px;
     }
     
-    /* Prob card */
     .prob-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,250,0.95));
         padding: 1.8rem;
         border-radius: 25px;
         box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
         margin: 1.2rem 0;
-        backdrop-filter: blur(10px);
         border: 2px solid rgba(255, 255, 255, 0.6);
-        animation: fadeInUp 0.8s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .prob-card::before {
-        content: '📊';
-        position: absolute;
-        font-size: 5rem;
-        opacity: 0.05;
-        bottom: -10px;
-        right: -10px;
-        transform: rotate(-10deg);
     }
     
     .prob-card .title-wrapper {
@@ -428,10 +346,6 @@ st.markdown("""
         align-items: center;
         gap: 12px;
         margin-bottom: 1.2rem;
-    }
-    
-    .prob-card .title-icon {
-        font-size: 2rem;
     }
     
     .prob-card .title {
@@ -487,30 +401,12 @@ st.markdown("""
         border-radius: 12px;
         height: 12px;
         overflow: hidden;
-        position: relative;
     }
     
     .prob-item .bar .fill {
         height: 100%;
         border-radius: 12px;
         transition: width 1.2s ease;
-        position: relative;
-    }
-    
-    .prob-item .bar .fill::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        animation: shimmerBar 2s infinite;
-    }
-    
-    @keyframes shimmerBar {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
     }
     
     .prob-item:nth-child(1) .fill { background: linear-gradient(90deg, #e88a9e, #d4708a); }
@@ -519,12 +415,6 @@ st.markdown("""
     .prob-item:nth-child(4) .fill { background: linear-gradient(90deg, #f5c542, #f0b830); }
     .prob-item:nth-child(5) .fill { background: linear-gradient(90deg, #9bc4d4, #7ab0c4); }
     
-    /* Loading */
-    .stSpinner > div {
-        border-color: #e88a9e !important;
-    }
-    
-    /* Footer */
     .footer {
         text-align: center;
         padding: 2rem 0 1rem 0;
@@ -546,7 +436,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ============ DATABASE DESKRIPSI ============
+# ============ DATABASE ============
 BUNGA_DESKRIPSI = {
     'tulip': {
         'nama_latin': 'Tulipa',
@@ -634,7 +524,6 @@ if model is None:
 
 class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
 
-# Emoji map
 emoji_map = {
     'tulip': '🌷',
     'lily': '🌸',
@@ -643,7 +532,7 @@ emoji_map = {
     'lotus': '🪷'
 }
 
-# ============ UPLOAD AREA ============
+# ============ UPLOAD ============
 st.markdown("""
 <div class="upload-area">
     <p class="main-text">📸 Upload Gambar Bunga</p>
@@ -652,14 +541,12 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Uploader - teks duplikat di bawah sudah di-hide oleh CSS
+# UPLOADER - semua teks di bawah sudah di-hide
 uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
 
 if uploaded:
     img = Image.open(uploaded)
-    st.markdown('<div class="image-preview">', unsafe_allow_html=True)
     st.image(img, use_column_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
     
     if st.button("🔍 Klasifikasikan!"):
         with st.spinner("⏳ Memproses..."):
@@ -678,7 +565,7 @@ if uploaded:
                 'probabilitas': pred[0]
             }
 
-# ============ TAMPILKAN HASIL ============
+# ============ HASIL ============
 if 'hasil' in st.session_state:
     hasil = st.session_state['hasil']
     nama = hasil['nama']
@@ -702,11 +589,11 @@ if 'hasil' in st.session_state:
         st.markdown(f"""
         <div class="info-card">
             <div class="title-wrapper">
-                <span class="title-icon">📖</span>
+                <span style="font-size:2rem;">📖</span>
                 <p class="title">Informasi Bunga</p>
             </div>
             <div class="latin-wrapper">
-                <p class="latin"><span class="label">Nama Latin:</span> {info['nama_latin']}</p>
+                <p class="latin"><span style="font-style:normal;opacity:0.6;">Nama Latin:</span> {info['nama_latin']}</p>
             </div>
         """, unsafe_allow_html=True)
         
@@ -725,7 +612,7 @@ if 'hasil' in st.session_state:
     st.markdown("""
     <div class="prob-card">
         <div class="title-wrapper">
-            <span class="title-icon">📊</span>
+            <span style="font-size:2rem;">📊</span>
             <p class="title">Probabilitas</p>
         </div>
     """, unsafe_allow_html=True)
