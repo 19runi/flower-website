@@ -424,50 +424,13 @@ st.markdown("""
 
 # ============ HEADER ============
 st.markdown("""
-<style>
-    .header {
-        background: white;
-        padding: 2.5rem 2rem;
-        border-radius: 24px;
-        text-align: center;
-        margin-bottom: 2rem;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-    .header .icon {
-        font-size: 4rem;
-        margin-bottom: 0.5rem;
-    }
-    .header h1 {
-        color: #1a1a2e;
-        font-size: 2.8rem;
-        font-weight: 800;
-        margin: 0;
-        background: linear-gradient(135deg, #e9405f, #f27121);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    .header p {
-        color: #6c6c8a;
-        font-size: 1.15rem;
-        margin: 0.8rem 0 0 0;
-        font-weight: 400;
-    }
-    .header .badge {
-        display: inline-block;
-        background: #f0f0f5;
-        padding: 0.3rem 1.2rem;
-        border-radius: 30px;
-        margin-top: 0.8rem;
-        font-size: 0.8rem;
-        color: #6c6c8a;
-        font-weight: 500;
-    }
-</style>
 <div class="header">
-    <div class="icon">🌿</div>
+    <div style="font-size: 3.5rem; margin-bottom: 0.3rem; letter-spacing: 10px;">
+        🌸 🌺 🌷 🌻 🪷
+    </div>
     <h1>Klasifikasi Bunga</h1>
-    <p>Upload gambar untuk mengetahui jenis bunganya secara instan ✨</p>
+    <p>📸 Upload gambar untuk mengetahui jenis bunganya secara instan</p>
+    <span class="badge">🤖 Didukung AI &nbsp;·&nbsp; 5 Jenis Bunga</span>
 </div>
 """, unsafe_allow_html=True)
 
