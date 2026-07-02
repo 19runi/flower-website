@@ -1,8 +1,23 @@
+import os
+import subprocess
+import sys
+
+# ============================================
+# INSTALL TENSORFLOW MANUAL (PAKAI PIP)
+# ============================================
+try:
+    import tensorflow as tf
+except ImportError:
+    with st.spinner('⏳ Menginstall TensorFlow (ini butuh waktu ~2 menit)...'):
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "tensorflow-cpu==2.18.0"])
+    import tensorflow as tf
+
+# ============================================
+# IMPORT LIBRARY LAINNYA
+# ============================================
 import streamlit as st
-import tensorflow as tf
 import numpy as np
 from PIL import Image
-import os
 import requests
 
 # ============================================
@@ -73,21 +88,18 @@ def load_model():
     model_path = 'model_bunga_densenet121.h5'
     file_id = "12ZJi1HbkI8ian7fWM0K98ADi1tpMvU4y"
     
-    # Cek apakah model sudah ada
     if os.path.exists(model_path):
         try:
             model = tf.keras.models.load_model(model_path)
             return model
         except:
-            os.remove(model_path)  # Hapus jika corrupt
+            os.remove(model_path)
     
-    # Download dari Google Drive
     with st.spinner('⏳ Mengunduh model (30 MB)...'):
         try:
             url = f'https://drive.google.com/uc?export=download&id={file_id}'
             response = requests.get(url, stream=True)
             
-            # Handle Google Drive confirm
             if 'confirm' in response.text and 'quota' in response.text:
                 import re
                 confirm = re.search(r'confirm=([^&]+)', response.text)
@@ -95,20 +107,16 @@ def load_model():
                     url = f'https://drive.google.com/uc?export=download&confirm={confirm.group(1)}&id={file_id}'
                     response = requests.get(url, stream=True)
             
-            # Simpan file
             with open(model_path, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
             
-            # Validasi ukuran file
-            if os.path.getsize(model_path) < 1000000:  # < 1 MB = corrupt
+            if os.path.getsize(model_path) < 1000000:
                 os.remove(model_path)
-                st.error('❌ File model corrupt! Coba lagi.')
+                st.error('❌ File model corrupt!')
                 return None
             
             st.success('✅ Model berhasil diunduh!')
-            
-            # Load model
             model = tf.keras.models.load_model(model_path)
             return model
             
@@ -125,7 +133,6 @@ if model is None:
     st.warning("⚠️ Gagal memuat model. Pastikan file model ada di Google Drive.")
     st.stop()
 
-# Upload gambar
 uploaded_file = st.file_uploader("📤 Upload gambar bunga", type=['jpg', 'jpeg', 'png'])
 
 if uploaded_file is not None:
@@ -138,12 +145,10 @@ if uploaded_file is not None:
     with col2:
         if st.button("🔍 Klasifikasi!", type="primary", use_container_width=True):
             with st.spinner("⏳ Menganalisis..."):
-                # Preprocessing
                 img_resized = img.resize((224, 224))
                 img_array = np.array(img_resized) / 255.0
                 img_array = np.expand_dims(img_array, axis=0)
                 
-                # Prediksi
                 predictions = model.predict(img_array)
                 predicted_idx = np.argmax(predictions[0])
                 predicted_class = class_names[predicted_idx]
@@ -155,7 +160,6 @@ if uploaded_file is not None:
     if 'predicted_class' in locals():
         st.markdown("---")
         
-        # Fakta
         st.subheader("📖 Fakta Menarik")
         bunga_info = BUNGA_DESKRIPSI.get(predicted_class)
         if bunga_info:
@@ -163,7 +167,6 @@ if uploaded_file is not None:
             for fakta in bunga_info['fakta']:
                 st.write(fakta)
         
-        # Probabilitas
         st.subheader("📈 Probabilitas per Kelas")
         for i, name in enumerate(class_names):
             prob = predictions[0][i] * 100
