@@ -448,7 +448,15 @@ st.markdown("""
         letter-spacing: 0.5px;
         opacity: 0.85;
     ">
-        Aplikasi Identifikasi Bunga dibangun dengan arsitektur DenseNet121 menggunakan pendekatan transfer learning dari ImageNet dan teknik dropout untuk mencegah overfitting. Model dilatih pada dataset 5 kelas bunga: Tulip, Lily, Orchid, Sunflower, dan Lotus. Pengguna cukup mengunggah gambar bunga, dan sistem akan langsung menampilkan hasil klasifikasi beserta tingkat probabilitasnya. Cocok untuk edukasi, penelitian, atau sekadar ingin tahu jenis bunga favorit Anda! 🌸
+        🌸 Identifikasi Bunga Digital 🌸
+
+Cukup upload foto bunga, dan sistem kami akan mengenalinya! 🚀
+
+Dibangun dengan "DenseNet121" & "Transfer Learning", aplikasi ini mampu mengenali "5 jenis bunga" dengan akurasi tinggi:
+
+🌷 Tulip · 🌸 Lily · 🌺 Orchid · 🌻 Sunflower · 🪷 Lotus
+
+📸 Upload gambar → Dapatkan hasil instan!🌸
     </p>
     <span style="
         display: inline-block;
