@@ -12,7 +12,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS dengan Font dan Efek Menarik
+# CSS dengan Efek Menarik
 st.markdown("""
 <style>
     /* Import font */
@@ -157,7 +157,7 @@ st.markdown("""
         margin: 1.5rem 0;
     }
     
-    /* ============ RESULT BOX YANG LEBIH MENARIK ============ */
+    /* Result box */
     .result-box {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,240,245,0.95));
         padding: 2.5rem 2rem;
@@ -173,7 +173,6 @@ st.markdown("""
         animation: fadeInUp 0.6s ease;
     }
     
-    /* Efek dekoratif di belakang */
     .result-box::before {
         content: '🌸';
         position: absolute;
@@ -194,7 +193,6 @@ st.markdown("""
         transform: rotate(-10deg);
     }
     
-    /* Animasi muncul */
     @keyframes fadeInUp {
         from {
             opacity: 0;
@@ -266,36 +264,56 @@ st.markdown("""
         margin: 0;
     }
     
-    .result-box .accuracy-icon {
-        font-size: 1.5rem;
-        margin-right: 0.5rem;
-    }
-    
-    /* Emoji confetti effect */
-    .result-box .confetti {
-        position: absolute;
-        font-size: 1.5rem;
-        opacity: 0.2;
-        z-index: 0;
-    }
-    
-    /* Info card */
+    /* ============ INFO BUNGA YANG LEBIH MENARIK ============ */
     .info-card {
-        background: rgba(255, 255, 255, 0.9);
-        padding: 1.5rem;
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,250,0.95));
+        padding: 1.8rem;
         border-radius: 25px;
-        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.2);
-        margin: 1rem 0;
+        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
+        margin: 1.2rem 0;
         backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.5);
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.7s ease;
+    }
+    
+    .info-card::before {
+        content: '🌿';
+        position: absolute;
+        font-size: 6rem;
+        opacity: 0.05;
+        top: -10px;
+        right: -10px;
+        transform: rotate(20deg);
+    }
+    
+    .info-card .title-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .info-card .title-icon {
+        font-size: 2rem;
     }
     
     .info-card .title {
         font-family: 'Playfair Display', serif;
         color: #4a1942;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
+        margin: 0;
+    }
+    
+    .info-card .latin-wrapper {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(232,138,158,0.15), rgba(212,112,138,0.15));
+        padding: 0.3rem 1.2rem;
+        border-radius: 50px;
+        margin: 0.5rem 0 1rem 0;
+        border: 1px solid rgba(232,138,158,0.2);
     }
     
     .info-card .latin {
@@ -304,19 +322,33 @@ st.markdown("""
         font-style: italic;
         font-size: 1rem;
         margin: 0;
+        font-weight: 600;
+    }
+    
+    .info-card .latin .label {
+        font-style: normal;
+        opacity: 0.6;
         font-weight: 400;
     }
     
     .fact {
-        padding: 0.7rem 0;
-        border-bottom: 1px solid rgba(255, 182, 193, 0.3);
+        padding: 0.8rem 0;
+        border-bottom: 1px solid rgba(255, 182, 193, 0.2);
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
         font-family: 'Quicksand', sans-serif;
         color: #4a1942;
         font-size: 0.95rem;
         font-weight: 500;
+        transition: all 0.3s ease;
+        padding-left: 0.5rem;
+        border-radius: 10px;
+    }
+    
+    .fact:hover {
+        background: rgba(232, 138, 158, 0.05);
+        padding-left: 1rem;
     }
     
     .fact:last-child {
@@ -324,38 +356,144 @@ st.markdown("""
     }
     
     .fact-icon {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         min-width: 35px;
     }
     
-    /* Progress bar */
-    .progress-item {
-        margin: 0.7rem 0;
+    .fact-number {
+        display: inline-block;
+        background: linear-gradient(135deg, #e88a9e, #d4708a);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        line-height: 24px;
+        margin-right: 5px;
     }
     
-    .progress-item .label {
+    /* ============ PROBABILITAS YANG LEBIH MENARIK ============ */
+    .prob-card {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,250,0.95));
+        padding: 1.8rem;
+        border-radius: 25px;
+        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
+        margin: 1.2rem 0;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        animation: fadeInUp 0.8s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .prob-card::before {
+        content: '📊';
+        position: absolute;
+        font-size: 5rem;
+        opacity: 0.05;
+        bottom: -10px;
+        right: -10px;
+        transform: rotate(-10deg);
+    }
+    
+    .prob-card .title-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 1.2rem;
+    }
+    
+    .prob-card .title-icon {
+        font-size: 2rem;
+    }
+    
+    .prob-card .title {
+        font-family: 'Playfair Display', serif;
+        color: #4a1942;
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .prob-item {
+        margin: 0.9rem 0;
+        padding: 0.5rem 0.8rem;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .prob-item:hover {
+        background: rgba(255, 255, 255, 0.6);
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.1);
+    }
+    
+    .prob-item .label {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         font-family: 'Quicksand', sans-serif;
-        font-size: 0.95rem;
+        font-size: 1rem;
         font-weight: 600;
         color: #4a1942;
+        margin-bottom: 0.3rem;
     }
     
-    .progress-item .bar {
-        background: rgba(255, 182, 193, 0.3);
-        border-radius: 10px;
-        height: 10px;
+    .prob-item .label .name {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .prob-item .label .percentage {
+        font-size: 1.1rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #e88a9e, #d4708a);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .prob-item .bar {
+        background: rgba(255, 182, 193, 0.2);
+        border-radius: 12px;
+        height: 12px;
         overflow: hidden;
-        margin-top: 4px;
+        position: relative;
     }
     
-    .progress-item .bar .fill {
+    .prob-item .bar .fill {
         height: 100%;
-        background: linear-gradient(90deg, #e88a9e, #d4708a);
-        border-radius: 10px;
-        transition: width 0.8s ease;
+        border-radius: 12px;
+        transition: width 1.2s ease;
+        position: relative;
     }
+    
+    .prob-item .bar .fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmerBar 2s infinite;
+    }
+    
+    @keyframes shimmerBar {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    
+    /* Warna berbeda untuk setiap bunga */
+    .prob-item:nth-child(1) .fill { background: linear-gradient(90deg, #e88a9e, #d4708a); }
+    .prob-item:nth-child(2) .fill { background: linear-gradient(90deg, #f7a1b5, #e88a9e); }
+    .prob-item:nth-child(3) .fill { background: linear-gradient(90deg, #d4a0c5, #b880a8); }
+    .prob-item:nth-child(4) .fill { background: linear-gradient(90deg, #f5c542, #f0b830); }
+    .prob-item:nth-child(5) .fill { background: linear-gradient(90deg, #9bc4d4, #7ab0c4); }
     
     /* Loading */
     .stSpinner > div {
@@ -472,6 +610,15 @@ if model is None:
 
 class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
 
+# Emoji map
+emoji_map = {
+    'tulip': '🌷',
+    'lily': '🌸',
+    'orchid': '🌺',
+    'sunflower': '🌻',
+    'lotus': '🪷'
+}
+
 # ============ UPLOAD AREA ============
 st.markdown("""
 <div class="upload-area">
@@ -506,76 +653,77 @@ if uploaded:
                 'probabilitas': pred[0]
             }
 
-# ============ TAMPILKAN HASIL DENGAN EFEK MENARIK ============
+# ============ TAMPILKAN HASIL ============
 if 'hasil' in st.session_state:
     hasil = st.session_state['hasil']
     nama = hasil['nama']
     akurasi = hasil['akurasi']
     prob = hasil['probabilitas']
     
-    # Pilih emoji berdasarkan bunga
-    emoji_map = {
-        'tulip': '🌷',
-        'lily': '🌸',
-        'orchid': '🌺',
-        'sunflower': '🌻',
-        'lotus': '🪷'
-    }
     emoji = emoji_map.get(nama, '🌸')
     
-    # Result card dengan efek menarik
+    # Result card
     st.markdown(f"""
     <div class="result-box">
-        <div class="confetti" style="top:10%; left:5%;">✨</div>
-        <div class="confetti" style="top:20%; right:8%;">🌟</div>
-        <div class="confetti" style="bottom:15%; left:10%;">💫</div>
-        <div class="confetti" style="bottom:25%; right:5%;">⭐</div>
         <p class="label">✨ Hasil Klasifikasi</p>
         <p class="name">{emoji} {nama.upper()}</p>
         <div class="accuracy-wrapper">
-            <p class="accuracy">
-                <span class="accuracy-icon">🎯</span>
-                {akurasi:.1f}%
-            </p>
+            <p class="accuracy">🎯 {akurasi:.1f}%</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Deskripsi
+    # ============ INFO BUNGA YANG LEBIH MENARIK ============
     info = get_deskripsi(nama)
     if info:
-        st.markdown("""
+        st.markdown(f"""
         <div class="info-card">
-            <div class="title">📖 Informasi Bunga</div>
-            <p class="latin">Nama Latin: {}</p>
-        """.format(info['nama_latin']), unsafe_allow_html=True)
+            <div class="title-wrapper">
+                <span class="title-icon">📖</span>
+                <p class="title">Informasi Bunga</p>
+            </div>
+            <div class="latin-wrapper">
+                <p class="latin"><span class="label">Nama Latin:</span> {info['nama_latin']}</p>
+            </div>
+        """, unsafe_allow_html=True)
         
-        for fact in info['fakta']:
+        for i, fact in enumerate(info['fakta'], 1):
             icon = fact.split()[0] if ' ' in fact else '🌸'
             text = fact.replace(icon, '').strip()
             st.markdown(f"""
             <div class="fact">
                 <span class="fact-icon">{icon}</span>
-                <span>{text}</span>
+                <span><span class="fact-number">{i}</span> {text}</span>
             </div>
             """, unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # Probabilitas
+    # ============ PROBABILITAS YANG LEBIH MENARIK ============
     st.markdown("""
-    <div class="info-card">
-        <div class="title">📊 Probabilitas</div>
+    <div class="prob-card">
+        <div class="title-wrapper">
+            <span class="title-icon">📊</span>
+            <p class="title">Probabilitas</p>
+        </div>
     """, unsafe_allow_html=True)
     
-    for i, name in enumerate(class_names):
-        prob_value = prob[i] * 100
+    # Sort by probability (highest first)
+    sorted_indices = np.argsort(prob)[::-1]
+    
+    for idx in sorted_indices:
+        name = class_names[idx]
+        prob_value = prob[idx] * 100
         emoji_icon = emoji_map.get(name, '🌸')
+        
         st.markdown(f"""
-        <div class="progress-item">
+        <div class="prob-item">
             <div class="label">
-                <span>{emoji_icon} {name.capitalize()}</span>
-                <span>{prob_value:.1f}%</span>
+                <span class="name">
+                    <span>{emoji_icon}</span>
+                    <span>{name.capitalize()}</span>
+                </span>
+                <span class="percentage">{prob_value:.1f}%</span>
             </div>
             <div class="bar">
                 <div class="fill" style="width: {prob_value}%;"></div>
