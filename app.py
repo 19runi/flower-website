@@ -12,11 +12,11 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS dengan Font Menarik
+# CSS dengan Font dan Efek Menarik
 st.markdown("""
 <style>
-    /* Import font menarik */
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600;700&display=swap');
+    /* Import font */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Quicksand:wght@400;600;700&display=swap');
     
     /* Background pink soft */
     .stApp {
@@ -32,7 +32,7 @@ st.markdown("""
         display: none;
     }
     
-    /* Header dengan font cantik */
+    /* Header */
     .header {
         text-align: center;
         padding: 2.5rem 1.5rem;
@@ -62,7 +62,7 @@ st.markdown("""
         letter-spacing: 1px;
     }
     
-    /* Upload area dengan font menarik */
+    /* Upload area */
     .upload-area {
         background: rgba(255, 255, 255, 0.85);
         padding: 3rem 2rem;
@@ -107,7 +107,7 @@ st.markdown("""
         opacity: 0.7;
     }
     
-    /* Tombol dengan font */
+    /* Tombol */
     .stButton > button {
         width: 100%;
         font-family: 'Quicksand', sans-serif;
@@ -130,7 +130,7 @@ st.markdown("""
         background: linear-gradient(135deg, #d4708a, #c05d78);
     }
     
-    /* Upload label dengan font */
+    /* Upload label */
     .stFileUploader > div > button {
         font-family: 'Quicksand', sans-serif !important;
         font-weight: 600 !important;
@@ -157,51 +157,129 @@ st.markdown("""
         margin: 1.5rem 0;
     }
     
-    /* Result box dengan font */
+    /* ============ RESULT BOX YANG LEBIH MENARIK ============ */
     .result-box {
-        background: rgba(255, 255, 255, 0.9);
-        padding: 2rem;
-        border-radius: 25px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,240,245,0.95));
+        padding: 2.5rem 2rem;
+        border-radius: 30px;
         text-align: center;
-        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.3);
+        box-shadow: 0 10px 40px rgba(255, 182, 193, 0.4), 
+                    inset 0 1px 0 rgba(255,255,255,0.8);
         margin: 1.5rem 0;
         backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.5);
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease;
+    }
+    
+    /* Efek dekoratif di belakang */
+    .result-box::before {
+        content: '🌸';
+        position: absolute;
+        font-size: 8rem;
+        opacity: 0.05;
+        top: -20px;
+        right: -20px;
+        transform: rotate(15deg);
+    }
+    
+    .result-box::after {
+        content: '🌺';
+        position: absolute;
+        font-size: 6rem;
+        opacity: 0.05;
+        bottom: -20px;
+        left: -20px;
+        transform: rotate(-10deg);
+    }
+    
+    /* Animasi muncul */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -200% center; }
+        100% { background-position: 200% center; }
     }
     
     .result-box .label {
         font-family: 'Quicksand', sans-serif;
-        color: #6b3a5a;
-        font-size: 1rem;
+        color: #8b5a7a;
+        font-size: 0.9rem;
         margin: 0;
-        font-weight: 600;
-        letter-spacing: 2px;
+        font-weight: 700;
+        letter-spacing: 4px;
         text-transform: uppercase;
-        opacity: 0.8;
+        opacity: 0.7;
+        position: relative;
+        z-index: 1;
     }
     
     .result-box .name {
         font-family: 'Playfair Display', serif;
-        font-size: 3.5rem;
-        font-weight: 700;
-        color: #4a1942;
-        margin: 0.5rem 0;
-        text-shadow: 2px 2px 8px rgba(255, 182, 193, 0.2);
+        font-size: 4.5rem;
+        font-weight: 900;
+        margin: 0.3rem 0;
+        background: linear-gradient(135deg, #4a1942, #8b3a6a, #4a1942);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 3s linear infinite;
+        position: relative;
+        z-index: 1;
+        text-shadow: none;
+        letter-spacing: 3px;
+    }
+    
+    .result-box .accuracy-wrapper {
+        display: inline-block;
+        background: linear-gradient(135deg, #e88a9e, #d4708a);
+        padding: 0.5rem 2.5rem;
+        border-radius: 50px;
+        box-shadow: 0 4px 20px rgba(232, 138, 158, 0.4);
+        position: relative;
+        z-index: 1;
+        animation: pulse 2s ease-in-out infinite;
     }
     
     .result-box .accuracy {
         font-family: 'Quicksand', sans-serif;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         font-weight: 700;
-        color: #c0392b;
-        background: rgba(255, 255, 255, 0.5);
-        padding: 0.3rem 2rem;
-        border-radius: 50px;
-        display: inline-block;
-        letter-spacing: 1px;
+        color: white;
+        letter-spacing: 2px;
+        margin: 0;
     }
     
-    /* Info card dengan font */
+    .result-box .accuracy-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+    
+    /* Emoji confetti effect */
+    .result-box .confetti {
+        position: absolute;
+        font-size: 1.5rem;
+        opacity: 0.2;
+        z-index: 0;
+    }
+    
+    /* Info card */
     .info-card {
         background: rgba(255, 255, 255, 0.9);
         padding: 1.5rem;
@@ -250,7 +328,7 @@ st.markdown("""
         min-width: 35px;
     }
     
-    /* Progress bar dengan font */
+    /* Progress bar */
     .progress-item {
         margin: 0.7rem 0;
     }
@@ -284,7 +362,7 @@ st.markdown("""
         border-color: #e88a9e !important;
     }
     
-    /* Footer dengan font */
+    /* Footer */
     .footer {
         text-align: center;
         padding: 2rem 0 1rem 0;
@@ -294,15 +372,6 @@ st.markdown("""
         opacity: 0.7;
         font-weight: 500;
         letter-spacing: 1px;
-    }
-    
-    /* Custom file upload info */
-    .file-info {
-        font-family: 'Quicksand', sans-serif;
-        color: #6b3a5a;
-        font-size: 0.85rem;
-        margin-top: 0.5rem;
-        opacity: 0.6;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -437,19 +506,38 @@ if uploaded:
                 'probabilitas': pred[0]
             }
 
-# ============ TAMPILKAN HASIL ============
+# ============ TAMPILKAN HASIL DENGAN EFEK MENARIK ============
 if 'hasil' in st.session_state:
     hasil = st.session_state['hasil']
     nama = hasil['nama']
     akurasi = hasil['akurasi']
     prob = hasil['probabilitas']
     
-    # Result card
+    # Pilih emoji berdasarkan bunga
+    emoji_map = {
+        'tulip': '🌷',
+        'lily': '🌸',
+        'orchid': '🌺',
+        'sunflower': '🌻',
+        'lotus': '🪷'
+    }
+    emoji = emoji_map.get(nama, '🌸')
+    
+    # Result card dengan efek menarik
     st.markdown(f"""
     <div class="result-box">
+        <div class="confetti" style="top:10%; left:5%;">✨</div>
+        <div class="confetti" style="top:20%; right:8%;">🌟</div>
+        <div class="confetti" style="bottom:15%; left:10%;">💫</div>
+        <div class="confetti" style="bottom:25%; right:5%;">⭐</div>
         <p class="label">✨ Hasil Klasifikasi</p>
-        <p class="name">{nama.upper()}</p>
-        <p class="accuracy">🎯 {akurasi:.1f}%</p>
+        <p class="name">{emoji} {nama.upper()}</p>
+        <div class="accuracy-wrapper">
+            <p class="accuracy">
+                <span class="accuracy-icon">🎯</span>
+                {akurasi:.1f}%
+            </p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -482,10 +570,11 @@ if 'hasil' in st.session_state:
     
     for i, name in enumerate(class_names):
         prob_value = prob[i] * 100
+        emoji_icon = emoji_map.get(name, '🌸')
         st.markdown(f"""
         <div class="progress-item">
             <div class="label">
-                <span>{'🌸 ' + name.capitalize()}</span>
+                <span>{emoji_icon} {name.capitalize()}</span>
                 <span>{prob_value:.1f}%</span>
             </div>
             <div class="bar">
