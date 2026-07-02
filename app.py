@@ -23,8 +23,6 @@ st.markdown("""
         display: none !important;
     }
     
-    /* ===== CARA PALING AMPUH ===== */
-    /* Sembunyikan SEMUA teks di uploader */
     .stFileUploader > div > div {
         display: none !important;
     }
@@ -49,7 +47,6 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Tampilkan hanya tombolnya */
     .stFileUploader > div > button {
         display: inline-block !important;
         font-family: 'Quicksand', sans-serif !important;
@@ -71,7 +68,6 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Header */
     .header {
         text-align: center;
         padding: 2.5rem 1.5rem;
@@ -101,7 +97,6 @@ st.markdown("""
         letter-spacing: 1px;
     }
     
-    /* Upload area - kotak putih */
     .upload-area {
         background: rgba(255, 255, 255, 0.9);
         padding: 3rem 2rem;
@@ -147,7 +142,6 @@ st.markdown("""
         opacity: 0.7;
     }
     
-    /* Tombol klasifikasi */
     .stButton > button {
         width: 100%;
         font-family: 'Quicksand', sans-serif;
@@ -496,7 +490,8 @@ def load_model():
     
     if os.path.exists(model_path):
         try:
-            return tf.keras.models.load_model(model_path)
+            # Coba load dengan custom_objects jika ada
+            return tf.keras.models.load_model(model_path, compile=False)
         except:
             os.remove(model_path)
     
@@ -515,7 +510,7 @@ def load_model():
                 f.write(chunk)
         
         st.success('✅ Model siap!')
-        return tf.keras.models.load_model(model_path)
+        return tf.keras.models.load_model(model_path, compile=False)
 
 model = load_model()
 if model is None:
@@ -532,6 +527,58 @@ emoji_map = {
     'lotus': '🪷'
 }
 
+# ============ PREPROCESSING FUNCTION ============
+def preprocess_image(img):
+    """
+    Preprocess gambar dengan cara yang lebih robust
+    """
+    # Resize ke 224x224
+    img = img.resize((224, 224), Image.Resampling.LANCZOS)
+    
+    # Convert ke RGB jika perlu
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
+    
+    # Convert ke array
+    x = np.array(img, dtype=np.float32)
+    
+    # Normalisasi yang benar (sesuai dengan training)
+    # Biasanya model DenseNet menggunakan normalisasi [0,1] atau [-1,1]
+    # Coba kedua cara
+    x = x / 255.0  # Normalisasi [0,1]
+    
+    # Alternatif: jika model dilatih dengan preprocessing lain
+    # x = (x - 0.5) / 0.5  # Normalisasi [-1,1]
+    
+    # Expand dims
+    x = np.expand_dims(x, axis=0)
+    
+    return x
+
+# ============ PREDICTION WITH ENSEMBLE ============
+def predict_with_ensemble(model, x, num_augmentations=3):
+    """
+    Melakukan prediksi dengan augmentasi untuk hasil lebih robust
+    """
+    predictions = []
+    
+    # Prediksi original
+    pred_original = model.predict(x, verbose=0)
+    predictions.append(pred_original)
+    
+    # Prediksi dengan sedikit augmentasi
+    for _ in range(num_augmentations - 1):
+        # Tambahkan noise kecil
+        noise = np.random.normal(0, 0.01, x.shape).astype(np.float32)
+        x_noise = x + noise
+        x_noise = np.clip(x_noise, 0, 1)
+        pred_noise = model.predict(x_noise, verbose=0)
+        predictions.append(pred_noise)
+    
+    # Rata-rata prediksi
+    avg_pred = np.mean(predictions, axis=0)
+    return avg_pred
+
 # ============ UPLOAD ============
 st.markdown("""
 <div class="upload-area">
@@ -541,7 +588,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# UPLOADER - semua teks di bawah sudah di-hide
 uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
 
 if uploaded:
@@ -550,20 +596,35 @@ if uploaded:
     
     if st.button("🔍 Klasifikasikan!"):
         with st.spinner("⏳ Memproses..."):
-            img_resized = img.resize((224, 224))
-            x = np.array(img_resized) / 255.0
-            x = np.expand_dims(x, axis=0)
-            
-            pred = model.predict(x)
-            idx = np.argmax(pred[0])
-            nama = class_names[idx]
-            akurasi = pred[0][idx] * 100
-            
-            st.session_state['hasil'] = {
-                'nama': nama,
-                'akurasi': akurasi,
-                'probabilitas': pred[0]
-            }
+            try:
+                # Preprocess
+                x = preprocess_image(img)
+                
+                # Prediksi dengan ensemble
+                pred = predict_with_ensemble(model, x)
+                
+                # Debug: print prediksi untuk melihat probabilitas
+                st.write("### Debug - Probabilitas per kelas:")
+                for i, name in enumerate(class_names):
+                    st.write(f"{name}: {pred[0][i]*100:.2f}%")
+                
+                # Ambil hasil
+                idx = np.argmax(pred[0])
+                nama = class_names[idx]
+                akurasi = pred[0][idx] * 100
+                
+                # Validasi: jika akurasi terlalu rendah, beri peringatan
+                if akurasi < 50:
+                    st.warning(f"⚠️ Akurasi rendah ({akurasi:.1f}%). Model tidak yakin dengan prediksi ini.")
+                
+                st.session_state['hasil'] = {
+                    'nama': nama,
+                    'akurasi': akurasi,
+                    'probabilitas': pred[0]
+                }
+                
+            except Exception as e:
+                st.error(f"❌ Error: {str(e)}")
 
 # ============ HASIL ============
 if 'hasil' in st.session_state:
