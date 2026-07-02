@@ -32,7 +32,8 @@ st.markdown("""
         display: none;
     }
     
-    /* ============ HILANGKAN SEMUA TEKS DI UPLOAD ============ */
+    /* ============ HILANGKAN SEMUA TEKS HITAM ============ */
+    /* Hilangkan semua teks di upload */
     .stFileUploader > div > div {
         display: none !important;
     }
@@ -54,6 +55,20 @@ st.markdown("""
     }
     
     .stFileUploader small {
+        display: none !important;
+    }
+    
+    /* Hilangkan teks "Drag 'n' drop" */
+    .stFileUploader > div > div > div > div > div > div {
+        display: none !important;
+    }
+    
+    /* Hilangkan semua teks di dalam uploader */
+    .stFileUploader [data-testid="stFileUploaderFileName"] {
+        display: none !important;
+    }
+    
+    .stFileUploader .e1f1d6gn5 {
         display: none !important;
     }
     
@@ -97,7 +112,7 @@ st.markdown("""
         backdrop-filter: blur(10px);
         box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
         transition: all 0.3s ease;
-        margin-bottom: 1rem;
+        margin-bottom: 0rem;
     }
     
     .upload-area:hover {
@@ -144,14 +159,20 @@ st.markdown("""
         padding: 0.7rem 2rem !important;
         font-size: 1rem !important;
         transition: all 0.3s ease !important;
-        margin: 0.5rem 0 !important;
+        margin: 0.5rem 0 0 0 !important;
         position: relative !important;
         z-index: 10 !important;
+        display: inline-block !important;
     }
     
     .stFileUploader > div > button:hover {
         transform: scale(1.05) !important;
         box-shadow: 0 4px 20px rgba(232, 138, 158, 0.4) !important;
+    }
+    
+    /* Hilangkan semua teks di tombol upload */
+    .stFileUploader > div > button > div {
+        display: none !important;
     }
     
     /* Tombol klasifikasi */
@@ -648,7 +669,6 @@ emoji_map = {
 }
 
 # ============ UPLOAD AREA - KOTAK PUTIH ============
-# Tampilkan kotak putih dengan teks
 st.markdown("""
 <div class="upload-area">
     <p class="main-text">📸 Upload Gambar Bunga</p>
@@ -657,7 +677,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Uploader - semua logika ada di sini
+# Uploader - semua logika di sini, teks hitam sudah hilang
 uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
 
 if uploaded:
