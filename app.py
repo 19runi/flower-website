@@ -12,224 +12,270 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS
+# CSS 
 st.markdown("""
 <style>
+    /* Background utama dengan gradien yang lebih halus */
     .stApp {
-        background: linear-gradient(135deg, #ffe4e1 0%, #ffd1dc 50%, #ffb6c1 100%);
+        background: linear-gradient(145deg, #faf0f5 0%, #fce4ec 50%, #f3e5f5 100%);
+        font-family: 'Segoe UI', 'Quicksand', sans-serif;
     }
     
-    .css-1d391kg, .css-1lcbmhc, .stSidebar {
+    /* Menyembunyikan elemen default Streamlit */
+    .css-1d391kg, .css-1lcbmhc, .stSidebar, #MainMenu, header, footer {
         display: none !important;
     }
     
-    .stFileUploader > div > div {
-        display: none !important;
-    }
-    
-    .stFileUploader > div > div > div {
-        display: none !important;
-    }
-    
-    .stFileUploader > div > div > div > div {
-        display: none !important;
-    }
-    
-    .stFileUploader > div > div > div > small {
-        display: none !important;
-    }
-    
-    .stFileUploader > div > div > div > div > div {
-        display: none !important;
-    }
-    
-    .stFileUploader small {
-        display: none !important;
-    }
-    
+    /* Custom upload button */
     .stFileUploader > div > button {
-        display: inline-block !important;
-        font-family: 'Quicksand', sans-serif !important;
+        font-family: 'Segoe UI', 'Quicksand', sans-serif !important;
         font-weight: 600 !important;
-        background: linear-gradient(135deg, #e88a9e, #d4708a) !important;
+        background: linear-gradient(135deg, #e91e63, #c2185b) !important;
         color: white !important;
-        border-radius: 12px !important;
+        border-radius: 50px !important;
         border: none !important;
-        padding: 0.7rem 2rem !important;
-        font-size: 1rem !important;
+        padding: 0.8rem 2.5rem !important;
+        font-size: 1.05rem !important;
         margin: 0.5rem 0 !important;
+        box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3) !important;
+        transition: all 0.3s ease !important;
+        letter-spacing: 0.5px !important;
     }
     
     .stFileUploader > div > button:hover {
-        transform: scale(1.05) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 25px rgba(233, 30, 99, 0.4) !important;
+        background: linear-gradient(135deg, #c2185b, #880e4f) !important;
     }
     
-    .stFileUploader > div > button > div {
-        display: none !important;
-    }
-    
+    /* Header utama - lebih elegan */
     .header {
         text-align: center;
-        padding: 2.5rem 1.5rem;
-        background: rgba(255, 255, 255, 0.7);
-        border-radius: 20px;
-        margin-bottom: 2rem;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+        padding: 2.8rem 2rem 2.2rem 2rem;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 30px;
+        margin-bottom: 2.5rem;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 40px rgba(233, 30, 99, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 30% 50%, rgba(233, 30, 99, 0.03), transparent 70%);
+        pointer-events: none;
+    }
+    
+    .header .emoji-row {
+        font-size: 3.2rem;
+        letter-spacing: 15px;
+        margin-bottom: 0.8rem;
+        animation: float 3s ease-in-out infinite;
+        position: relative;
+        z-index: 1;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
     }
     
     .header h1 {
-        font-family: 'Playfair Display', serif;
-        color: #4a1942;
-        font-size: 3.2rem;
-        margin: 0;
+        font-family: 'Playfair Display', 'Georgia', serif;
+        font-size: 3.8rem;
         font-weight: 700;
-        text-shadow: 2px 2px 8px rgba(255, 182, 193, 0.3);
+        margin: 0.2rem 0;
+        background: linear-gradient(135deg, #880e4f, #c2185b, #e91e63);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: shimmer 4s linear infinite;
+        position: relative;
+        z-index: 1;
         letter-spacing: 2px;
     }
     
-    .header p {
-        font-family: 'Quicksand', sans-serif;
-        color: #6b3a5a;
-        font-size: 1.2rem;
-        margin: 0.5rem 0 0 0;
-        font-weight: 600;
-        letter-spacing: 1px;
+    @keyframes shimmer {
+        0% { background-position: 0% center; }
+        100% { background-position: 200% center; }
     }
     
+    .header .subtitle {
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
+        font-size: 1.15rem;
+        font-weight: 500;
+        color: #6a1b4d;
+        margin: 0.8rem 0 0.5rem 0;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+        line-height: 1.8;
+    }
+    
+    .header .flower-tags {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin: 1rem 0 0.5rem 0;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .header .flower-tag {
+        display: inline-block;
+        font-family: 'Quicksand', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 0.4rem 1.2rem;
+        border-radius: 50px;
+        background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+        color: #880e4f;
+        border: 1px solid rgba(233, 30, 99, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .header .flower-tag:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(233, 30, 99, 0.15);
+        background: linear-gradient(135deg, #f8bbd0, #f48fb1);
+    }
+    
+    /* Upload area - lebih modern */
     .upload-area {
-        background: rgba(255, 255, 255, 0.9);
-        padding: 3rem 2rem;
-        border-radius: 25px;
-        border: 3px dashed #e88a9e;
+        background: rgba(255, 255, 255, 0.92);
+        padding: 3.5rem 2rem;
+        border-radius: 30px;
+        border: 2.5px dashed #e91e63;
         text-align: center;
         backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
-        transition: all 0.3s ease;
+        box-shadow: 0 8px 40px rgba(233, 30, 99, 0.06);
+        transition: all 0.4s ease;
         margin-bottom: 0rem;
+        position: relative;
     }
     
     .upload-area:hover {
-        background: rgba(255, 255, 255, 0.95);
-        border-color: #d4708a;
-        transform: translateY(-3px);
-        box-shadow: 0 12px 40px rgba(255, 182, 193, 0.35);
+        background: rgba(255, 255, 255, 0.97);
+        border-color: #c2185b;
+        transform: translateY(-5px);
+        box-shadow: 0 12px 50px rgba(233, 30, 99, 0.12);
+    }
+    
+    .upload-area .upload-icon {
+        font-size: 4rem;
+        margin-bottom: 0.5rem;
+        display: block;
     }
     
     .upload-area .main-text {
-        font-family: 'Quicksand', sans-serif;
-        font-size: 1.4rem;
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
+        font-size: 1.5rem;
         font-weight: 700;
         color: #4a1942;
-        margin: 0;
+        margin: 0.5rem 0 0.3rem 0;
     }
     
     .upload-area .sub-text {
-        font-family: 'Quicksand', sans-serif;
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
         font-size: 1rem;
         color: #6b3a5a;
-        margin: 0.5rem 0;
-        font-weight: 400;
-        opacity: 0.8;
-    }
-    
-    .upload-area .info-text {
-        font-family: 'Quicksand', sans-serif;
-        font-size: 0.9rem;
-        color: #8b5a7a;
-        margin-top: 0.5rem;
+        margin: 0.3rem 0;
         font-weight: 400;
         opacity: 0.7;
     }
     
-    .stButton > button {
-        width: 100%;
-        font-family: 'Quicksand', sans-serif;
-        font-weight: 700;
-        font-size: 1.2rem;
-        background: linear-gradient(135deg, #e88a9e, #d4708a);
-        color: white;
-        padding: 0.8rem;
-        border: none;
-        border-radius: 15px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(232, 138, 158, 0.3);
-        margin-top: 1rem;
-        letter-spacing: 1px;
+    .upload-area .info-text {
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
+        font-size: 0.85rem;
+        color: #8b5a7a;
+        margin-top: 0.5rem;
+        font-weight: 400;
+        opacity: 0.6;
     }
     
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(232, 138, 158, 0.5);
-        background: linear-gradient(135deg, #d4708a, #c05d78);
-    }
-    
-    .image-preview {
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 8px 30px rgba(255, 182, 193, 0.3);
-        border: 3px solid rgba(255, 255, 255, 0.6);
-        margin: 1.5rem 0;
-    }
-    
+    /* Result box - lebih elegan */
     .result-box {
-        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,240,245,0.95));
-        padding: 2.5rem 2rem;
-        border-radius: 30px;
+        background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(252,228,236,0.95));
+        padding: 2.8rem 2.5rem;
+        border-radius: 35px;
         text-align: center;
-        box-shadow: 0 10px 40px rgba(255, 182, 193, 0.4);
-        margin: 1.5rem 0;
-        border: 2px solid rgba(255, 255, 255, 0.6);
-        animation: fadeInUp 0.6s ease;
+        box-shadow: 0 12px 50px rgba(233, 30, 99, 0.1);
+        margin: 2rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        animation: fadeInUp 0.7s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .result-box::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -30%;
+        width: 60%;
+        height: 60%;
+        background: radial-gradient(circle, rgba(233, 30, 99, 0.05), transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
     }
     
     @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(30px); }
+        from { opacity: 0; transform: translateY(40px); }
         to { opacity: 1; transform: translateY(0); }
     }
     
     @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.02); }
-        100% { transform: scale(1); }
-    }
-    
-    @keyframes shimmer {
-        0% { background-position: -200% center; }
-        100% { background-position: 200% center; }
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.03); }
     }
     
     .result-box .label {
         font-family: 'Quicksand', sans-serif;
         color: #8b5a7a;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         margin: 0;
         font-weight: 700;
-        letter-spacing: 4px;
+        letter-spacing: 5px;
         text-transform: uppercase;
-        opacity: 0.7;
+        opacity: 0.6;
+        position: relative;
+        z-index: 1;
     }
     
     .result-box .name {
-        font-family: 'Playfair Display', serif;
-        font-size: 4.5rem;
+        font-family: 'Playfair Display', 'Georgia', serif;
+        font-size: 4.8rem;
         font-weight: 900;
-        margin: 0.3rem 0;
-        background: linear-gradient(135deg, #4a1942, #8b3a6a, #4a1942);
-        background-size: 200% auto;
+        margin: 0.3rem 0 0.8rem 0;
+        background: linear-gradient(135deg, #880e4f, #c2185b, #e91e63, #c2185b, #880e4f);
+        background-size: 300% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
         animation: shimmer 3s linear infinite;
         letter-spacing: 3px;
+        position: relative;
+        z-index: 1;
     }
     
     .result-box .accuracy-wrapper {
         display: inline-block;
-        background: linear-gradient(135deg, #e88a9e, #d4708a);
-        padding: 0.5rem 2.5rem;
+        background: linear-gradient(135deg, #e91e63, #c2185b);
+        padding: 0.6rem 2.8rem;
         border-radius: 50px;
-        box-shadow: 0 4px 20px rgba(232, 138, 158, 0.4);
+        box-shadow: 0 4px 25px rgba(233, 30, 99, 0.3);
         animation: pulse 2s ease-in-out infinite;
+        position: relative;
+        z-index: 1;
     }
     
     .result-box .accuracy {
@@ -241,66 +287,72 @@ st.markdown("""
         margin: 0;
     }
     
+    /* Info cards - lebih rapi */
     .info-card {
-        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,250,0.95));
-        padding: 1.8rem;
-        border-radius: 25px;
-        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
-        margin: 1.2rem 0;
-        border: 2px solid rgba(255, 255, 255, 0.6);
+        background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(252,228,236,0.93));
+        padding: 2rem;
+        border-radius: 30px;
+        box-shadow: 0 8px 40px rgba(233, 30, 99, 0.06);
+        margin: 1.5rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.6);
     }
     
     .info-card .title-wrapper {
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 0.5rem;
+        gap: 14px;
+        margin-bottom: 0.8rem;
+    }
+    
+    .info-card .title-icon {
+        font-size: 2rem;
     }
     
     .info-card .title {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Playfair Display', 'Georgia', serif;
         color: #4a1942;
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         font-weight: 700;
         margin: 0;
     }
     
     .info-card .latin-wrapper {
         display: inline-block;
-        background: linear-gradient(135deg, rgba(232,138,158,0.15), rgba(212,112,138,0.15));
-        padding: 0.3rem 1.2rem;
+        background: linear-gradient(135deg, rgba(233,30,99,0.08), rgba(194,24,91,0.08));
+        padding: 0.4rem 1.5rem;
         border-radius: 50px;
-        margin: 0.5rem 0 1rem 0;
-        border: 1px solid rgba(232,138,158,0.2);
+        margin: 0.5rem 0 1.2rem 0;
+        border: 1px solid rgba(233,30,99,0.08);
     }
     
     .info-card .latin {
-        font-family: 'Quicksand', sans-serif;
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
         color: #6b3a5a;
         font-style: italic;
-        font-size: 1rem;
+        font-size: 1.05rem;
         margin: 0;
         font-weight: 600;
     }
     
     .fact {
-        padding: 0.8rem 0;
-        border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+        padding: 0.9rem 0.5rem;
+        border-bottom: 1px solid rgba(233, 30, 99, 0.06);
         display: flex;
         align-items: center;
-        gap: 14px;
-        font-family: 'Quicksand', sans-serif;
+        gap: 16px;
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
         color: #4a1942;
         font-size: 0.95rem;
         font-weight: 500;
         transition: all 0.3s ease;
-        padding-left: 0.5rem;
-        border-radius: 10px;
+        padding-left: 0.8rem;
+        border-radius: 12px;
     }
     
     .fact:hover {
-        background: rgba(232, 138, 158, 0.05);
-        padding-left: 1rem;
+        background: rgba(233, 30, 99, 0.04);
+        padding-left: 1.2rem;
+        transform: translateX(3px);
     }
     
     .fact:last-child {
@@ -308,71 +360,62 @@ st.markdown("""
     }
     
     .fact-icon {
-        font-size: 1.4rem;
-        min-width: 35px;
+        font-size: 1.5rem;
+        min-width: 36px;
     }
     
-    .fact-number {
-        display: inline-block;
-        background: linear-gradient(135deg, #e88a9e, #d4708a);
-        color: white;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        text-align: center;
-        font-size: 0.7rem;
-        font-weight: 700;
-        line-height: 24px;
-        margin-right: 5px;
-    }
-    
+    /* Probability bars - lebih modern */
     .prob-card {
-        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,250,0.95));
-        padding: 1.8rem;
-        border-radius: 25px;
-        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
-        margin: 1.2rem 0;
-        border: 2px solid rgba(255, 255, 255, 0.6);
+        background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(252,228,236,0.93));
+        padding: 2rem;
+        border-radius: 30px;
+        box-shadow: 0 8px 40px rgba(233, 30, 99, 0.06);
+        margin: 1.5rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.6);
     }
     
     .prob-card .title-wrapper {
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 1.2rem;
+        gap: 14px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .prob-card .title-icon {
+        font-size: 2rem;
     }
     
     .prob-card .title {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Playfair Display', 'Georgia', serif;
         color: #4a1942;
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         font-weight: 700;
         margin: 0;
     }
     
     .prob-item {
-        margin: 0.9rem 0;
-        padding: 0.5rem 0.8rem;
-        border-radius: 15px;
+        margin: 1rem 0;
+        padding: 0.6rem 0.8rem;
+        border-radius: 18px;
         transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.4);
     }
     
     .prob-item:hover {
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.7);
         transform: translateX(5px);
-        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.1);
+        box-shadow: 0 4px 20px rgba(233, 30, 99, 0.05);
     }
     
     .prob-item .label {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-family: 'Quicksand', sans-serif;
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
         font-size: 1rem;
         font-weight: 600;
         color: #4a1942;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.4rem;
     }
     
     .prob-item .label .name {
@@ -384,40 +427,96 @@ st.markdown("""
     .prob-item .label .percentage {
         font-size: 1.1rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #e88a9e, #d4708a);
+        background: linear-gradient(135deg, #e91e63, #c2185b);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
     
     .prob-item .bar {
-        background: rgba(255, 182, 193, 0.2);
-        border-radius: 12px;
-        height: 12px;
+        background: rgba(233, 30, 99, 0.08);
+        border-radius: 20px;
+        height: 14px;
         overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
     
     .prob-item .bar .fill {
         height: 100%;
-        border-radius: 12px;
-        transition: width 1.2s ease;
+        border-radius: 20px;
+        transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
     }
     
-    .prob-item:nth-child(1) .fill { background: linear-gradient(90deg, #e88a9e, #d4708a); }
-    .prob-item:nth-child(2) .fill { background: linear-gradient(90deg, #f7a1b5, #e88a9e); }
-    .prob-item:nth-child(3) .fill { background: linear-gradient(90deg, #d4a0c5, #b880a8); }
-    .prob-item:nth-child(4) .fill { background: linear-gradient(90deg, #f5c542, #f0b830); }
-    .prob-item:nth-child(5) .fill { background: linear-gradient(90deg, #9bc4d4, #7ab0c4); }
+    .prob-item .bar .fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        animation: shimmerBar 2s infinite;
+    }
+    
+    @keyframes shimmerBar {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    
+    .prob-item:nth-child(1) .fill { background: linear-gradient(90deg, #e91e63, #c2185b); }
+    .prob-item:nth-child(2) .fill { background: linear-gradient(90deg, #f06292, #e91e63); }
+    .prob-item:nth-child(3) .fill { background: linear-gradient(90deg, #ba68c8, #9c27b0); }
+    .prob-item:nth-child(4) .fill { background: linear-gradient(90deg, #ffd54f, #ffb300); }
+    .prob-item:nth-child(5) .fill { background: linear-gradient(90deg, #4dd0e1, #00acc1); }
+    
+    .image-preview {
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(233, 30, 99, 0.08);
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        margin: 1.5rem 0;
+        transition: all 0.3s ease;
+    }
+    
+    .image-preview:hover {
+        transform: scale(1.01);
+        box-shadow: 0 15px 50px rgba(233, 30, 99, 0.12);
+    }
+    
+    .stButton > button {
+        width: 100%;
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, #e91e63, #c2185b);
+        color: white;
+        padding: 0.9rem;
+        border: none;
+        border-radius: 50px;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 20px rgba(233, 30, 99, 0.25);
+        margin-top: 1rem;
+        letter-spacing: 1px;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 35px rgba(233, 30, 99, 0.35);
+        background: linear-gradient(135deg, #c2185b, #880e4f);
+    }
     
     .footer {
         text-align: center;
-        padding: 2rem 0 1rem 0;
-        font-family: 'Quicksand', sans-serif;
+        padding: 2.5rem 0 1rem 0;
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
         color: #6b3a5a;
-        font-size: 1rem;
-        opacity: 0.7;
+        font-size: 0.95rem;
+        opacity: 0.6;
         font-weight: 500;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
+        border-top: 1px solid rgba(233, 30, 99, 0.05);
+        margin-top: 1.5rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -425,52 +524,21 @@ st.markdown("""
 # ============ HEADER ============
 st.markdown("""
 <div class="header">
-    <div style="font-size: 3.8rem; margin-bottom: 0.5rem; letter-spacing: 12px; line-height: 1.4;">
-        🌸 🌺 🌷 🌻 🪷
+    <div class="emoji-row">🌸 🌺 🌷 🌻 🪷</div>
+    <h1>🌸 Identifikasi Bunga 🌸</h1>
+    <div class="subtitle">
+        ✨ Upload foto bunga dan dapatkan hasil identifikasi instan! ✨
     </div>
-    <h1 style="
-        font-family: 'Playfair Display', serif;
-        font-size: 3.5rem;
-        font-weight: 700;
-        margin: 0.3rem 0 0.2rem 0;
-        color: #d63384;
-        letter-spacing: 4px;
-        text-shadow: 2px 2px 30px rgba(214, 51, 132, 0.12);
-    ">
-        Identifikasi Bunga
-    </h1>
-    <p style="
-        font-family: 'Quicksand', sans-serif;
-        font-size: 1.2rem;
-        font-weight: 500;
-        color: #6a1b4d;
-        margin: 0.5rem 0 0.8rem 0;
-        letter-spacing: 0.5px;
-        opacity: 0.85;
-    ">
-        🌸 Identifikasi Bunga Digital 🌸
-
-Cukup upload foto bunga, dan sistem kami akan mengenalinya! 🚀
-
-Dibangun dengan "DenseNet121" & "Transfer Learning", aplikasi ini mampu mengenali "5 jenis bunga" dengan akurasi tinggi:
-
-🌷 Tulip · 🌸 Lily · 🌺 Orchid · 🌻 Sunflower · 🪷 Lotus
-
-📸 Upload gambar → Dapatkan hasil instan!🌸
-    </p>
-    <span style="
-        display: inline-block;
-        font-family: 'Quicksand', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #880e4f;
-        background: linear-gradient(135deg, #fce4ec, #f8bbd0);
-        padding: 0.4rem 1.8rem;
-        border-radius: 50px;
-        border: 1px solid rgba(233, 30, 99, 0.1);
-        letter-spacing: 0.5px;
-    ">
-    </span>
+    <div class="subtitle" style="font-size: 0.95rem; opacity: 0.7; margin-top: 0.3rem;">
+        Dibangun dengan DenseNet121 & Transfer Learning
+    </div>
+    <div class="flower-tags">
+        <span class="flower-tag">🌷 Tulip</span>
+        <span class="flower-tag">🌸 Lily</span>
+        <span class="flower-tag">🌺 Orchid</span>
+        <span class="flower-tag">🌻 Sunflower</span>
+        <span class="flower-tag">🪷 Lotus</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
