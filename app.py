@@ -12,7 +12,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS dengan Background Pink Soft - Tanpa Sidebar
+# CSS dengan Background Pink Soft
 st.markdown("""
 <style>
     /* Background pink soft */
@@ -20,7 +20,7 @@ st.markdown("""
         background: linear-gradient(135deg, #ffe4e1 0%, #ffd1dc 50%, #ffb6c1 100%);
     }
     
-    /* Hilangkan sidebar default */
+    /* Hilangkan sidebar */
     .css-1d391kg, .css-1lcbmhc {
         display: none;
     }
@@ -29,17 +29,10 @@ st.markdown("""
         display: none;
     }
     
-    /* Container utama */
-    .main-container {
-        max-width: 700px;
-        margin: 0 auto;
-        padding: 1rem;
-    }
-    
     /* Header */
     .header {
         text-align: center;
-        padding: 2rem 1.5rem;
+        padding: 2.5rem 1.5rem;
         background: rgba(255, 255, 255, 0.7);
         border-radius: 20px;
         margin-bottom: 2rem;
@@ -49,7 +42,7 @@ st.markdown("""
     
     .header h1 {
         color: #4a1942;
-        font-size: 2.5rem;
+        font-size: 2.8rem;
         margin: 0;
         font-weight: 700;
     }
@@ -61,7 +54,72 @@ st.markdown("""
         font-weight: 500;
     }
     
-    /* Card hasil */
+    /* Upload area */
+    .upload-area {
+        background: rgba(255, 255, 255, 0.7);
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        border: 2px dashed #ffb6c1;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+    }
+    
+    .upload-area:hover {
+        background: rgba(255, 255, 255, 0.85);
+        border-color: #e88a9e;
+    }
+    
+    .upload-area .info-text {
+        color: #6b3a5a;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        opacity: 0.7;
+    }
+    
+    /* Tombol */
+    .stButton > button {
+        width: 100%;
+        background: linear-gradient(135deg, #e88a9e, #d4708a);
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(232, 138, 158, 0.3);
+        margin-top: 1rem;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(232, 138, 158, 0.5);
+        background: linear-gradient(135deg, #d4708a, #c05d78);
+    }
+    
+    /* Upload label */
+    .stFileUploader > div > button {
+        background: #e88a9e !important;
+        color: white !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    
+    .stFileUploader > div > button:hover {
+        background: #d4708a !important;
+    }
+    
+    /* Image preview */
+    .image-preview {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(255, 182, 193, 0.3);
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        margin: 1rem 0;
+    }
+    
+    /* Result box */
     .result-box {
         background: rgba(255, 255, 255, 0.85);
         padding: 2rem;
@@ -90,7 +148,7 @@ st.markdown("""
         display: inline-block;
     }
     
-    /* Card info */
+    /* Info card */
     .info-card {
         background: rgba(255, 255, 255, 0.85);
         padding: 1.5rem;
@@ -134,43 +192,6 @@ st.markdown("""
         min-width: 35px;
     }
     
-    /* Upload area */
-    .upload-area {
-        background: rgba(255, 255, 255, 0.7);
-        padding: 2.5rem 2rem;
-        border-radius: 20px;
-        border: 2px dashed #ffb6c1;
-        text-align: center;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
-    }
-    
-    .upload-area:hover {
-        background: rgba(255, 255, 255, 0.85);
-        border-color: #e88a9e;
-    }
-    
-    /* Tombol */
-    .stButton > button {
-        width: 100%;
-        background: linear-gradient(135deg, #e88a9e, #d4708a);
-        color: white;
-        font-weight: 600;
-        padding: 0.8rem;
-        border: none;
-        border-radius: 15px;
-        font-size: 1.1rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(232, 138, 158, 0.3);
-        margin-top: 1rem;
-    }
-    
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(232, 138, 158, 0.5);
-        background: linear-gradient(135deg, #d4708a, #c05d78);
-    }
-    
     /* Progress bar */
     .progress-item {
         margin: 0.7rem 0;
@@ -199,63 +220,9 @@ st.markdown("""
         transition: width 0.8s ease;
     }
     
-    /* Upload label */
-    .stFileUploader > div > button {
-        background: #e88a9e !important;
-        color: white !important;
-        border-radius: 10px !important;
-        border: none !important;
-    }
-    
-    .stFileUploader > div > button:hover {
-        background: #d4708a !important;
-    }
-    
     /* Loading */
     .stSpinner > div {
         border-color: #e88a9e !important;
-    }
-    
-    /* Info gambar */
-    .image-preview {
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(255, 182, 193, 0.3);
-        border: 3px solid rgba(255, 255, 255, 0.5);
-        margin: 1rem 0;
-    }
-    
-    /* Info tambahan di bawah */
-    .flower-info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-        padding: 0.5rem 0;
-    }
-    
-    .flower-item {
-        background: rgba(255, 255, 255, 0.5);
-        padding: 0.5rem;
-        border-radius: 10px;
-        text-align: center;
-        color: #4a1942;
-        font-weight: 500;
-    }
-    
-    .tips-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 0.5rem;
-        padding: 0.5rem 0;
-    }
-    
-    .tip-item {
-        background: rgba(255, 255, 255, 0.5);
-        padding: 0.5rem;
-        border-radius: 10px;
-        text-align: center;
-        color: #6b3a5a;
-        font-size: 0.9rem;
     }
     
     /* Footer */
@@ -276,35 +243,6 @@ st.markdown("""
     <p>Upload gambar untuk mengetahui jenis bunganya</p>
 </div>
 """, unsafe_allow_html=True)
-
-# ============ INFORMASI BUNGA & TIPS ============
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown("""
-    <div class="info-card">
-        <div class="title">🌺 5 Jenis Bunga</div>
-        <div class="flower-info-grid">
-            <div class="flower-item">🌷 Tulip</div>
-            <div class="flower-item">🌸 Lily</div>
-            <div class="flower-item">🌺 Orchid</div>
-            <div class="flower-item">🌻 Sunflower</div>
-            <div class="flower-item">🪷 Lotus</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col2:
-    st.markdown("""
-    <div class="info-card">
-        <div class="title">💡 Tips</div>
-        <div class="tips-grid">
-            <div class="tip-item">📸 Latar bersih</div>
-            <div class="tip-item">☀️ Cukup cahaya</div>
-            <div class="tip-item">🖼️ JPG/PNG</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
 
 # ============ DATABASE DESKRIPSI ============
 BUNGA_DESKRIPSI = {
@@ -394,7 +332,7 @@ if model is None:
 
 class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
 
-# ============ UPLOAD & PREDIKSI ============
+# ============ UPLOAD AREA ============
 uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'])
 
 if uploaded:
