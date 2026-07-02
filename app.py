@@ -8,198 +8,242 @@ import re
 
 # ============ KONFIGURASI ============
 st.set_page_config(
-    page_title="🌺 FLOWER WEBSITE",
-    page_icon="🌺",
+    page_title="FLOWER WEBSITE",
+    page_icon="🌸",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# ============ CSS ============
+# ============ CSS CUSTOM - ESTETIK BANGET ============
 st.markdown("""
 <style>
-    /* Reset */
+    /* RESET */
     .main > div { padding-top: 0; }
+    .stApp { background: #faf0f5; }
     
-    /* Background */
-    .stApp {
-        background: linear-gradient(160deg, #fce4ec 0%, #f8e8f5 40%, #f3e5f5 70%, #e8eaf6 100%);
-        min-height: 100vh;
+    /* HAPUS UPLOAD DEFAULT */
+    .stFileUploader > div > div > div > div {
+        display: none !important;
+    }
+    .stFileUploader > div > div {
+        padding: 0 !important;
+    }
+    .stFileUploader > div > div > div {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+    .stFileUploader label {
+        display: none !important;
     }
     
-    /* Header */
+    /* HEADER - ELEGAN */
     .header {
         text-align: center;
-        padding: 20px 0 5px 0;
+        padding: 30px 0 10px 0;
     }
-    .header h1 {
-        font-size: 4.2em;
+    .header .logo {
+        font-size: 3.8em;
         font-weight: 900;
-        margin: 0;
-        background: linear-gradient(135deg, #e91e63, #ff6f00, #f9a825, #2e7d32, #0d47a1, #6a1b9a);
+        letter-spacing: 6px;
+        background: linear-gradient(135deg, #e91e63, #f06292, #ba68c8, #7e57c2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        letter-spacing: 5px;
+        text-shadow: none;
+        margin: 0;
+        line-height: 1.2;
     }
     .header .sub {
-        font-size: 1.15em;
-        color: #6a1b4d;
-        font-weight: 500;
-        opacity: 0.8;
-        letter-spacing: 4px;
+        font-size: 1em;
+        color: #7a4a6e;
+        letter-spacing: 8px;
+        font-weight: 400;
         margin-top: 0;
+        opacity: 0.7;
     }
-    .header .flowers-deco {
-        font-size: 2em;
-        opacity: 0.4;
-        margin: 5px 0;
-        letter-spacing: 12px;
+    .header .divider {
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, #e91e63, #ba68c8);
+        margin: 15px auto 5px auto;
+        border-radius: 10px;
     }
     
-    /* Glass Card */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.82);
+    /* CARD - GLASS ELEGAN */
+    .glass {
+        background: rgba(255, 255, 255, 0.75);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border-radius: 28px;
-        padding: 28px 32px;
-        box-shadow: 0 10px 40px rgba(233, 30, 99, 0.10);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        margin: 10px 0;
-        transition: transform 0.3s;
+        border-radius: 30px;
+        padding: 30px 32px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        box-shadow: 0 15px 50px rgba(233, 30, 99, 0.08);
+        transition: all 0.4s ease;
     }
-    .glass-card:hover {
+    .glass:hover {
+        box-shadow: 0 20px 60px rgba(233, 30, 99, 0.12);
         transform: translateY(-2px);
     }
     
-    /* Section Title */
-    .section-title {
-        font-size: 1.3em;
+    /* TITLE CARD */
+    .card-title {
+        font-size: 1.1em;
         font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 18px;
+        color: #4a2a40;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .card-title span {
+        font-size: 1.3em;
     }
     
-    /* Upload Area - SATU AJA */
+    /* UPLOAD AREA - SATU, BERSIH, ESTETIK */
     .upload-area {
-        border: 3px dashed #e91e63;
-        border-radius: 20px;
-        padding: 45px 25px;
+        border: 2px dashed #e8d5e0;
+        border-radius: 24px;
+        padding: 50px 20px;
         text-align: center;
-        background: rgba(255,255,255,0.35);
+        background: rgba(255, 255, 255, 0.3);
         transition: all 0.4s ease;
         cursor: pointer;
+        position: relative;
     }
     .upload-area:hover {
-        background: rgba(255,255,255,0.65);
-        border-color: #9c27b0;
+        border-color: #e91e63;
+        background: rgba(255, 255, 255, 0.6);
         transform: scale(1.01);
     }
-    .upload-icon { font-size: 4em; display: block; margin-bottom: 8px; }
-    .upload-text { font-size: 1.25em; font-weight: 700; color: #2d3436; }
-    .upload-sub { color: #999; font-size: 0.9em; margin-top: 6px; }
+    .upload-area .icon {
+        font-size: 4em;
+        display: block;
+        margin-bottom: 10px;
+        opacity: 0.8;
+    }
+    .upload-area .main-text {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #3d2a35;
+    }
+    .upload-area .sub-text {
+        font-size: 0.85em;
+        color: #aa8a9a;
+        margin-top: 6px;
+    }
     
-    /* Tombol */
-    .btn-classify {
+    /* STATUS MODEL - MINIMALIS */
+    .status {
+        text-align: center;
+        font-size: 0.85em;
+        color: #66bb6a;
+        font-weight: 500;
+        padding: 6px 0 0 0;
+        letter-spacing: 1px;
+    }
+    
+    /* TOMBOL */
+    .btn-pink {
         background: linear-gradient(135deg, #e91e63, #9c27b0) !important;
         color: white !important;
         font-weight: 700 !important;
-        font-size: 1.15em !important;
-        padding: 15px 35px !important;
+        font-size: 1em !important;
+        padding: 14px 30px !important;
         border-radius: 50px !important;
         border: none !important;
-        box-shadow: 0 8px 30px rgba(233, 30, 99, 0.35) !important;
+        box-shadow: 0 8px 30px rgba(233, 30, 99, 0.3) !important;
         transition: all 0.3s !important;
         width: 100% !important;
         letter-spacing: 2px;
     }
-    .btn-classify:hover {
+    .btn-pink:hover {
         transform: translateY(-3px) !important;
-        box-shadow: 0 12px 40px rgba(233, 30, 99, 0.5) !important;
+        box-shadow: 0 12px 40px rgba(233, 30, 99, 0.45) !important;
     }
     
-    /* Hasil */
-    .result-box {
-        background: linear-gradient(135deg, #ffffff, #fce4ec);
-        border-radius: 18px;
-        padding: 20px 25px;
-        border-left: 6px solid #e91e63;
+    /* HASIL */
+    .result {
+        background: linear-gradient(135deg, #fff5f8, #fce4ec);
+        border-radius: 20px;
+        padding: 22px 26px;
+        border-left: 5px solid #e91e63;
         margin: 15px 0;
-        animation: fadeIn 0.5s ease;
+        animation: fadeUp 0.5s ease;
     }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(15px); }
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    .result-name {
-        font-size: 3em;
+    .result .name {
+        font-size: 2.6em;
         font-weight: 900;
-        color: #2d3436;
+        color: #2d1b26;
     }
-    .result-accuracy {
-        font-size: 2.4em;
+    .result .acc {
+        font-size: 2.2em;
         font-weight: 900;
-        background: linear-gradient(135deg, #00b894, #00cec9);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: #00b894;
         text-align: right;
     }
     
-    /* Deskripsi */
-    .deskripsi-box {
-        background: linear-gradient(135deg, #fdf2f8, #fce4ec);
+    /* DESKRIPSI */
+    .desc-box {
+        background: rgba(255, 255, 255, 0.6);
         border-radius: 16px;
         padding: 18px 22px;
-        border-left: 5px solid #e91e63;
+        border-left: 4px solid #ba68c8;
         margin: 15px 0;
     }
-    .deskripsi-title {
+    .desc-box .title {
         font-weight: 700;
-        color: #880e4f;
-        margin-bottom: 8px;
-    }
-    .fakta-item {
-        padding: 5px 0;
+        color: #6a1b4d;
+        margin-bottom: 6px;
         font-size: 0.95em;
-        color: #2d3436;
-        border-bottom: 1px solid rgba(233,30,99,0.08);
     }
-    .fakta-item:last-child { border-bottom: none; }
+    .desc-box .item {
+        padding: 4px 0;
+        font-size: 0.92em;
+        color: #3d2a35;
+        border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .desc-box .item:last-child { border-bottom: none; }
     
-    /* Progress Bar */
+    /* PROGRESS */
     .stProgress > div > div {
-        background: linear-gradient(90deg, #e91e63, #9c27b0) !important;
-        border-radius: 12px !important;
-        height: 22px !important;
+        background: linear-gradient(90deg, #e91e63, #ba68c8) !important;
+        border-radius: 20px !important;
+        height: 20px !important;
     }
     
-    /* Status Model - Minimalis di card */
-    .model-status {
-        text-align: center;
-        font-size: 0.9em;
-        color: #00b894;
-        font-weight: 600;
-        padding: 2px 0;
-    }
-    
-    /* Footer Ringkas */
+    /* FOOTER - RINGKAS & ESTETIK */
     .footer {
         text-align: center;
-        padding: 25px 0 10px 0;
-        color: #aaa;
-        font-size: 0.85em;
-        border-top: 1px solid rgba(233,30,99,0.08);
+        padding: 25px 0 15px 0;
+        color: #bba0ae;
+        font-size: 0.8em;
+        letter-spacing: 2px;
+        border-top: 1px solid rgba(233,30,99,0.06);
         margin-top: 20px;
     }
     .footer .love { color: #e91e63; }
+    .footer .flowers { font-size: 1.4em; letter-spacing: 8px; opacity: 0.5; }
     
-    /* Responsif */
+    /* INFO UPLOAD */
+    .info-upload {
+        font-size: 0.85em;
+        color: #aa8a9a;
+        padding: 8px 0 0 0;
+        text-align: center;
+    }
+    
+    /* RESPONSIF */
     @media (max-width: 768px) {
-        .header h1 { font-size: 2.5em; }
-        .result-name { font-size: 2em; }
-        .result-accuracy { font-size: 1.8em; }
-        .glass-card { padding: 18px; }
+        .header .logo { font-size: 2.4em; letter-spacing: 3px; }
+        .result .name { font-size: 1.8em; }
+        .result .acc { font-size: 1.6em; }
+        .glass { padding: 20px; }
         .upload-area { padding: 30px 15px; }
     }
 </style>
@@ -208,9 +252,9 @@ st.markdown("""
 # ============ HEADER ============
 st.markdown("""
 <div class="header">
-    <h1>🌺 FLOWER WEBSITE</h1>
-    <p class="sub">✨ Identifikasi 5 Jenis Bunga dengan AI</p>
-    <div class="flowers-deco">🌸 🌷 🌻 🌺 🪷</div>
+    <div class="logo">FLOWER WEBSITE</div>
+    <div class="sub">identifikasi 5 jenis bunga</div>
+    <div class="divider"></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -219,28 +263,28 @@ BUNGA_DESKRIPSI = {
     'tulip': {
         'nama_latin': 'Tulipa',
         'fakta': [
-            '🌷 Tulip berasal dari Asia Tengah, simbol nasional Belanda',
-            '🌷 Lebih dari 3.000 varietas tulip terdaftar secara resmi',
+            '🌷 Simbol nasional Belanda, berasal dari Asia Tengah',
+            '🌷 3.000+ varietas terdaftar secara resmi',
             '🌷 Merah = cinta, kuning = kegembiraan, putih = maaf',
-            '🌷 Abad ke-17: Belanda mengalami "Tulip Mania"'
+            '🌷 Abad ke-17: fenomena "Tulip Mania" di Belanda'
         ]
     },
     'lily': {
         'nama_latin': 'Lilium',
         'fakta': [
-            '🌸 Lily salah satu bunga tertua (3.000 tahun SM)',
-            '🌸 Memiliki 6 kelopak, melambangkan kemurnian',
-            '🌸 Dalam mitologi Yunani, bunga dewi Hera',
-            '🌸 Beberapa spesies bisa tumbuh hingga 2,5 meter'
+            '🌸 Salah satu bunga tertua (3.000 tahun SM)',
+            '🌸 6 kelopak, melambangkan kemurnian',
+            '🌸 Bunga dewi Hera dalam mitologi Yunani',
+            '🌸 Beberapa spesies tumbuh hingga 2,5 meter'
         ]
     },
     'orchid': {
         'nama_latin': 'Orchidaceae',
         'fakta': [
-            '🌺 Lebih dari 28.000 spesies anggrek di dunia',
+            '🌺 28.000+ spesies di seluruh dunia',
             '🌺 Ditemukan di semua benua kecuali Antartika',
             '🌺 Satu kapsul berisi hingga 3 juta biji',
-            '🌺 Beberapa spesies bisa hidup hingga 100 tahun'
+            '🌺 Beberapa spesies hidup hingga 100 tahun'
         ]
     },
     'sunflower': {
@@ -248,16 +292,16 @@ BUNGA_DESKRIPSI = {
         'fakta': [
             '🌻 Bisa tumbuh hingga 3 meter lebih',
             '🌻 Bunga muda mengikuti pergerakan matahari',
-            '🌻 Kepala bunga terdiri dari ribuan bunga kecil',
+            '🌻 Kepala bunga = ribuan bunga kecil',
             '🌻 Bunga nasional Ukraina'
         ]
     },
     'lotus': {
         'nama_latin': 'Nelumbo nucifera',
         'fakta': [
-            '🪷 Bisa bertahan 1.000 tahun dalam kondisi kering',
-            '🪷 Bunga suci dalam agama Buddha dan Hindu',
-            '🪷 Tumbuh di air berlumpur tapi tetap bersih',
+            '🪷 Bertahan 1.000 tahun dalam kondisi kering',
+            '🪷 Bunga suci dalam agama Buddha & Hindu',
+            '🪷 Tumbuh di lumpur tapi tetap bersih',
             '🪷 Biji bisa berkecambah setelah 1.300 tahun'
         ]
     }
@@ -279,7 +323,7 @@ def load_model():
         except:
             os.remove(model_path)
     
-    with st.spinner('⏳ Download model 30MB...'):
+    with st.spinner('⏳ Mengunduh model...'):
         try:
             url = f'https://drive.google.com/uc?export=download&id={file_id}'
             r = requests.get(url, stream=True)
@@ -300,20 +344,21 @@ class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
 
 model = load_model()
 if model is None:
-    st.error("❌ Gagal memuat model. Refresh halaman.")
+    st.error("❌ Gagal memuat model.")
     st.stop()
 
 # ============ 2 KOLOM ============
-col_kiri, col_kanan = st.columns([1, 1], gap="large")
+col1, col2 = st.columns([1, 1], gap="large")
 
-with col_kiri:
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown('<p class="section-title">📸 Upload Gambar</p>')
+with col1:
+    st.markdown('<div class="glass">', unsafe_allow_html=True)
+    st.markdown('<div class="card-title"><span>📸</span> Upload Gambar</div>')
     
-    # Status model di dalam card
-    st.markdown('<p class="model-status">✅ Model siap digunakan</p>', unsafe_allow_html=True)
+    # Status model - minimalis
+    st.markdown('<div class="status">✓ Model siap digunakan</div>', unsafe_allow_html=True)
+    st.markdown('<div style="height:10px;"></div>', unsafe_allow_html=True)
     
-    # Upload - SATU AREA
+    # UPLOAD - SATU AREA, BERSIH
     uploaded = st.file_uploader(
         "",
         type=['jpg', 'png', 'jpeg'],
@@ -323,24 +368,24 @@ with col_kiri:
     if not uploaded:
         st.markdown("""
         <div class="upload-area">
-            <span class="upload-icon">🌸</span>
-            <div class="upload-text">Klik atau seret gambar ke sini</div>
-            <div class="upload-sub">Format: JPG, PNG, JPEG • Maks 200MB</div>
+            <span class="icon">🌸</span>
+            <div class="main-text">Klik atau seret gambar</div>
+            <div class="sub-text">JPG, PNG, JPEG • Maks 200MB</div>
         </div>
         """, unsafe_allow_html=True)
     else:
         img = Image.open(uploaded)
-        st.image(img, caption="🖼️ Gambar yang diupload", use_column_width=True)
+        st.image(img, caption="📷 Gambar yang diupload", use_column_width=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
 
-with col_kanan:
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown('<p class="section-title">🔍 Hasil Klasifikasi</p>')
+with col2:
+    st.markdown('<div class="glass">', unsafe_allow_html=True)
+    st.markdown('<div class="card-title"><span>🔍</span> Hasil Klasifikasi</div>')
     
     if uploaded:
-        if st.button("🌸 KLASIFIKASI SEKARANG", type="primary", use_container_width=True):
-            with st.spinner("🧠 Menganalisis..."):
+        if st.button("🌸 KLASIFIKASI", type="primary", use_container_width=True):
+            with st.spinner("Menganalisis..."):
                 img_resized = img.resize((224, 224))
                 x = np.array(img_resized) / 255.0
                 x = np.expand_dims(x, axis=0)
@@ -350,44 +395,46 @@ with col_kanan:
                 nama = class_names[idx]
                 akurasi = pred[0][idx] * 100
                 
-                # Hasil
-                st.markdown("---")
-                col_nama, col_akurasi = st.columns([2, 1])
-                with col_nama:
-                    icon_map = {'tulip':'🌷','lily':'🌸','orchid':'🌺','sunflower':'🌻','lotus':'🪷'}
-                    st.markdown(f'<p class="result-name">{icon_map.get(nama, "🌸")} {nama.upper()}</p>', unsafe_allow_html=True)
-                with col_akurasi:
-                    st.markdown(f'<p class="result-accuracy">{akurasi:.2f}%</p>', unsafe_allow_html=True)
+                # HASIL
+                st.markdown('<div class="result">', unsafe_allow_html=True)
+                col_n, col_a = st.columns([2, 1])
+                icon_map = {'tulip':'🌷','lily':'🌸','orchid':'🌺','sunflower':'🌻','lotus':'🪷'}
+                with col_n:
+                    st.markdown(f'<div class="name">{icon_map.get(nama, "🌸")} {nama.upper()}</div>', unsafe_allow_html=True)
+                with col_a:
+                    st.markdown(f'<div class="acc">{akurasi:.2f}%</div>', unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
                 
-                # Deskripsi
+                # DESKRIPSI
                 fakta = get_fakta(nama)
                 if fakta:
-                    st.markdown('<div class="deskripsi-box">', unsafe_allow_html=True)
-                    st.markdown(f'<p class="deskripsi-title">📖 Fakta Menarik</p>', unsafe_allow_html=True)
+                    st.markdown('<div class="desc-box">', unsafe_allow_html=True)
+                    st.markdown('<div class="title">📖 Fakta Menarik</div>', unsafe_allow_html=True)
                     for item in fakta:
-                        st.markdown(f'<p class="fakta-item">{item}</p>', unsafe_allow_html=True)
+                        st.markdown(f'<div class="item">{item}</div>', unsafe_allow_html=True)
                     st.markdown('</div>', unsafe_allow_html=True)
                 
-                # Probabilitas
-                st.markdown("📊 **Probabilitas per Kelas**")
+                # PROBABILITAS
+                st.markdown("📊 **Probabilitas**")
                 for i, name in enumerate(class_names):
                     prob = pred[0][i] * 100
-                    col_bar, col_pct = st.columns([4, 1])
-                    with col_bar:
+                    cb, cp = st.columns([4, 1])
+                    with cb:
                         st.progress(int(prob) / 100)
-                    with col_pct:
-                        st.markdown(f'<span style="font-weight:700;">{prob:.1f}%</span>', unsafe_allow_html=True)
+                    with cp:
+                        st.markdown(f'<span style="font-weight:600;">{prob:.1f}%</span>', unsafe_allow_html=True)
                     st.caption(name.upper())
     else:
-        st.info("👆 Upload gambar terlebih dahulu")
+        st.markdown('<div style="padding:30px 0;text-align:center;color:#bba0ae;">🌸 Upload gambar<br>untuk memulai</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ============ FOOTER RINGKAS ============
+# ============ FOOTER ============
 st.markdown("""
 <div class="footer">
-    🌺 <b>FLOWER WEBSITE</b> • Dibuat dengan <span class="love">❤️</span> untuk UAS • Model DenseNet121
+    <div class="flowers">🌸 🌷 🌻 🌺 🪷</div>
+    FLOWER WEBSITE • Dibuat dengan <span class="love">♥</span> untuk UAS
     <br>
-    🌷 Tulip &nbsp;·&nbsp; 🌸 Lily &nbsp;·&nbsp; 🌺 Orchid &nbsp;·&nbsp; 🌻 Sunflower &nbsp;·&nbsp; 🪷 Lotus
+    Model DenseNet121 • TensorFlow • Streamlit
 </div>
 """, unsafe_allow_html=True)
