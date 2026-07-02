@@ -12,9 +12,12 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS dengan Background Pink Soft
+# CSS dengan Font Menarik
 st.markdown("""
 <style>
+    /* Import font menarik */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600;700&display=swap');
+    
     /* Background pink soft */
     .stApp {
         background: linear-gradient(135deg, #ffe4e1 0%, #ffd1dc 50%, #ffb6c1 100%);
@@ -29,7 +32,7 @@ st.markdown("""
         display: none;
     }
     
-    /* Header */
+    /* Header dengan font cantik */
     .header {
         text-align: center;
         padding: 2.5rem 1.5rem;
@@ -41,55 +44,84 @@ st.markdown("""
     }
     
     .header h1 {
+        font-family: 'Playfair Display', serif;
         color: #4a1942;
-        font-size: 2.8rem;
+        font-size: 3.2rem;
         margin: 0;
         font-weight: 700;
+        text-shadow: 2px 2px 8px rgba(255, 182, 193, 0.3);
+        letter-spacing: 2px;
     }
     
     .header p {
+        font-family: 'Quicksand', sans-serif;
         color: #6b3a5a;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         margin: 0.5rem 0 0 0;
-        font-weight: 500;
+        font-weight: 600;
+        letter-spacing: 1px;
     }
     
-    /* Upload area */
+    /* Upload area dengan font menarik */
     .upload-area {
-        background: rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.85);
         padding: 3rem 2rem;
-        border-radius: 20px;
-        border: 2px dashed #ffb6c1;
+        border-radius: 25px;
+        border: 3px dashed #e88a9e;
         text-align: center;
         backdrop-filter: blur(10px);
-        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
+        transition: all 0.3s ease;
     }
     
     .upload-area:hover {
-        background: rgba(255, 255, 255, 0.85);
-        border-color: #e88a9e;
+        background: rgba(255, 255, 255, 0.95);
+        border-color: #d4708a;
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(255, 182, 193, 0.35);
+    }
+    
+    .upload-area .main-text {
+        font-family: 'Quicksand', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #4a1942;
+        margin: 0;
+    }
+    
+    .upload-area .sub-text {
+        font-family: 'Quicksand', sans-serif;
+        font-size: 1rem;
+        color: #6b3a5a;
+        margin: 0.5rem 0;
+        font-weight: 400;
+        opacity: 0.8;
     }
     
     .upload-area .info-text {
-        color: #6b3a5a;
+        font-family: 'Quicksand', sans-serif;
         font-size: 0.9rem;
+        color: #8b5a7a;
         margin-top: 0.5rem;
+        font-weight: 400;
         opacity: 0.7;
     }
     
-    /* Tombol */
+    /* Tombol dengan font */
     .stButton > button {
         width: 100%;
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
         background: linear-gradient(135deg, #e88a9e, #d4708a);
         color: white;
-        font-weight: 600;
         padding: 0.8rem;
         border: none;
         border-radius: 15px;
-        font-size: 1.1rem;
         transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(232, 138, 158, 0.3);
         margin-top: 1rem;
+        letter-spacing: 1px;
     }
     
     .stButton > button:hover {
@@ -98,79 +130,103 @@ st.markdown("""
         background: linear-gradient(135deg, #d4708a, #c05d78);
     }
     
-    /* Upload label */
+    /* Upload label dengan font */
     .stFileUploader > div > button {
+        font-family: 'Quicksand', sans-serif !important;
+        font-weight: 600 !important;
         background: #e88a9e !important;
         color: white !important;
-        border-radius: 10px !important;
+        border-radius: 12px !important;
         border: none !important;
+        padding: 0.6rem 1.5rem !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
     }
     
     .stFileUploader > div > button:hover {
         background: #d4708a !important;
+        transform: scale(1.02);
     }
     
     /* Image preview */
     .image-preview {
-        border-radius: 15px;
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 4px 20px rgba(255, 182, 193, 0.3);
-        border: 3px solid rgba(255, 255, 255, 0.5);
-        margin: 1rem 0;
+        box-shadow: 0 8px 30px rgba(255, 182, 193, 0.3);
+        border: 3px solid rgba(255, 255, 255, 0.6);
+        margin: 1.5rem 0;
     }
     
-    /* Result box */
+    /* Result box dengan font */
     .result-box {
-        background: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.9);
         padding: 2rem;
-        border-radius: 20px;
+        border-radius: 25px;
         text-align: center;
-        box-shadow: 0 4px 20px rgba(255, 182, 193, 0.3);
+        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.3);
         margin: 1.5rem 0;
         backdrop-filter: blur(10px);
         border: 2px solid rgba(255, 255, 255, 0.5);
     }
     
+    .result-box .label {
+        font-family: 'Quicksand', sans-serif;
+        color: #6b3a5a;
+        font-size: 1rem;
+        margin: 0;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        opacity: 0.8;
+    }
+    
     .result-box .name {
-        font-size: 3rem;
-        font-weight: bold;
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+        font-weight: 700;
         color: #4a1942;
         margin: 0.5rem 0;
+        text-shadow: 2px 2px 8px rgba(255, 182, 193, 0.2);
     }
     
     .result-box .accuracy {
-        font-size: 1.4rem;
+        font-family: 'Quicksand', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
         color: #c0392b;
-        font-weight: 600;
         background: rgba(255, 255, 255, 0.5);
-        padding: 0.3rem 1.5rem;
+        padding: 0.3rem 2rem;
         border-radius: 50px;
         display: inline-block;
+        letter-spacing: 1px;
     }
     
-    /* Info card */
+    /* Info card dengan font */
     .info-card {
-        background: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.9);
         padding: 1.5rem;
-        border-radius: 20px;
-        box-shadow: 0 4px 20px rgba(255, 182, 193, 0.2);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.2);
         margin: 1rem 0;
         backdrop-filter: blur(10px);
         border: 2px solid rgba(255, 255, 255, 0.5);
     }
     
     .info-card .title {
+        font-family: 'Playfair Display', serif;
         color: #4a1942;
-        font-size: 1.3rem;
-        font-weight: 600;
+        font-size: 1.5rem;
+        font-weight: 700;
         margin-bottom: 0.5rem;
     }
     
     .info-card .latin {
+        font-family: 'Quicksand', sans-serif;
         color: #6b3a5a;
         font-style: italic;
         font-size: 1rem;
         margin: 0;
+        font-weight: 400;
     }
     
     .fact {
@@ -179,8 +235,10 @@ st.markdown("""
         display: flex;
         align-items: center;
         gap: 12px;
+        font-family: 'Quicksand', sans-serif;
         color: #4a1942;
         font-size: 0.95rem;
+        font-weight: 500;
     }
     
     .fact:last-child {
@@ -192,7 +250,7 @@ st.markdown("""
         min-width: 35px;
     }
     
-    /* Progress bar */
+    /* Progress bar dengan font */
     .progress-item {
         margin: 0.7rem 0;
     }
@@ -200,9 +258,10 @@ st.markdown("""
     .progress-item .label {
         display: flex;
         justify-content: space-between;
+        font-family: 'Quicksand', sans-serif;
         font-size: 0.95rem;
+        font-weight: 600;
         color: #4a1942;
-        font-weight: 500;
     }
     
     .progress-item .bar {
@@ -225,13 +284,25 @@ st.markdown("""
         border-color: #e88a9e !important;
     }
     
-    /* Footer */
+    /* Footer dengan font */
     .footer {
         text-align: center;
         padding: 2rem 0 1rem 0;
+        font-family: 'Quicksand', sans-serif;
         color: #6b3a5a;
-        font-size: 0.9rem;
+        font-size: 1rem;
         opacity: 0.7;
+        font-weight: 500;
+        letter-spacing: 1px;
+    }
+    
+    /* Custom file upload info */
+    .file-info {
+        font-family: 'Quicksand', sans-serif;
+        color: #6b3a5a;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        opacity: 0.6;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -333,7 +404,15 @@ if model is None:
 class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
 
 # ============ UPLOAD AREA ============
-uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'])
+st.markdown("""
+<div class="upload-area">
+    <p class="main-text">📸 Upload Gambar Bunga</p>
+    <p class="sub-text">Pilih gambar dari perangkat Anda</p>
+    <p class="info-text">200MB per file • JPG, PNG</p>
+</div>
+""", unsafe_allow_html=True)
+
+uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
 
 if uploaded:
     img = Image.open(uploaded)
@@ -368,9 +447,9 @@ if 'hasil' in st.session_state:
     # Result card
     st.markdown(f"""
     <div class="result-box">
-        <p style="color: #6b3a5a; font-size: 1rem; margin: 0;">Hasil Klasifikasi</p>
+        <p class="label">✨ Hasil Klasifikasi</p>
         <p class="name">{nama.upper()}</p>
-        <p class="accuracy">✨ {akurasi:.1f}%</p>
+        <p class="accuracy">🎯 {akurasi:.1f}%</p>
     </div>
     """, unsafe_allow_html=True)
     
