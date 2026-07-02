@@ -1,15 +1,16 @@
-import os
-import subprocess
-import sys
-
 # ============================================
 # INSTALL TENSORFLOW MANUAL (PAKAI PIP)
 # ============================================
+import subprocess
+import sys
+import os
+
+# Install TensorFlow dulu sebelum import streamlit
 try:
     import tensorflow as tf
 except ImportError:
-    with st.spinner('⏳ Menginstall TensorFlow (ini butuh waktu ~2 menit)...'):
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "tensorflow-cpu==2.18.0"])
+    print("⏳ Menginstall TensorFlow...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "tensorflow-cpu==2.18.0"])
     import tensorflow as tf
 
 # ============================================
@@ -19,6 +20,7 @@ import streamlit as st
 import numpy as np
 from PIL import Image
 import requests
+import re
 
 # ============================================
 # SETUP HALAMAN
@@ -101,7 +103,6 @@ def load_model():
             response = requests.get(url, stream=True)
             
             if 'confirm' in response.text and 'quota' in response.text:
-                import re
                 confirm = re.search(r'confirm=([^&]+)', response.text)
                 if confirm:
                     url = f'https://drive.google.com/uc?export=download&confirm={confirm.group(1)}&id={file_id}'
