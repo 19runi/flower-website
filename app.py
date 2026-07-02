@@ -603,11 +603,6 @@ if uploaded:
                 # Prediksi dengan ensemble
                 pred = predict_with_ensemble(model, x)
                 
-                # Debug: print prediksi untuk melihat probabilitas
-                st.write("### Debug - Probabilitas per kelas:")
-                for i, name in enumerate(class_names):
-                    st.write(f"{name}: {pred[0][i]*100:.2f}%")
-                
                 # Ambil hasil
                 idx = np.argmax(pred[0])
                 nama = class_names[idx]
