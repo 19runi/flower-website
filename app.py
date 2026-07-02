@@ -8,159 +8,8 @@ import re
 
 st.set_page_config(page_title="Klasifikasi Bunga", page_icon="🌸")
 
-# ============ CUSTOM CSS UNTUK DESAIN ============
-st.markdown("""
-<style>
-    /* Styling utama */
-    .main {
-        padding: 0rem 1rem;
-    }
-    
-    /* Header styling */
-    .header-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 1.5rem;
-        border-radius: 15px;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-    
-    .header-container h1 {
-        color: white;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin: 0;
-    }
-    
-    .header-container p {
-        color: rgba(255,255,255,0.9);
-        font-size: 1.1rem;
-        margin: 0.5rem 0 0 0;
-    }
-    
-    /* Card styling */
-    .card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        margin-bottom: 1.5rem;
-        border: 1px solid #f0f0f0;
-    }
-    
-    /* Upload area styling */
-    .upload-area {
-        border: 2px dashed #667eea;
-        border-radius: 12px;
-        padding: 2rem;
-        text-align: center;
-        background: #f8f9ff;
-        transition: all 0.3s ease;
-    }
-    
-    .upload-area:hover {
-        background: #f0f2ff;
-        border-color: #764ba2;
-    }
-    
-    /* Result card */
-    .result-card {
-        background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
-        padding: 1.5rem;
-        border-radius: 12px;
-        border-left: 5px solid #667eea;
-        margin-top: 1rem;
-    }
-    
-    .flower-name {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #2d3436;
-        margin: 0;
-    }
-    
-    .accuracy {
-        font-size: 1.2rem;
-        color: #00b894;
-        font-weight: 600;
-    }
-    
-    /* Description styling */
-    .desc-box {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
-        margin: 1rem 0;
-    }
-    
-    .fact-item {
-        padding: 0.5rem;
-        margin: 0.3rem 0;
-        border-radius: 6px;
-        background: white;
-        border-left: 3px solid #667eea;
-    }
-    
-    /* Progress bar container */
-    .prob-item {
-        margin: 0.5rem 0;
-        padding: 0.3rem;
-        border-radius: 6px;
-        background: #f8f9fa;
-    }
-    
-    .prob-label {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.9rem;
-        font-weight: 500;
-        margin-bottom: 0.2rem;
-    }
-    
-    /* Custom progress bar */
-    .stProgress > div > div {
-        background: linear-gradient(90deg, #667eea, #764ba2) !important;
-    }
-    
-    /* Button styling */
-    .stButton > button {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        font-weight: 600;
-        padding: 0.6rem 2rem;
-        border: none;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        width: 100%;
-    }
-    
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-    
-    /* Image styling */
-    .stImage {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    
-    /* Success/Info boxes */
-    .stAlert {
-        border-radius: 10px !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# ============ HEADER ============
-st.markdown("""
-<div class="header-container">
-    <h1>🌸 Klasifikasi Jenis Bunga</h1>
-    <p>Upload gambar bunga untuk mengetahui jenisnya!</p>
-</div>
-""", unsafe_allow_html=True)
+st.title("🌸 Klasifikasi Jenis Bunga")
+st.write("Upload gambar bunga untuk mengetahui jenisnya!")
 
 class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
 
@@ -216,11 +65,12 @@ BUNGA_DESKRIPSI = {
 def get_deskripsi_bunga(nama_bunga):
     bunga_info = BUNGA_DESKRIPSI.get(nama_bunga.lower())
     if bunga_info:
-        deskripsi = f"### 🌿 **{nama_bunga.upper()}** *({bunga_info['nama_latin']})*\n\n"
+        deskripsi = f"\n🌿 **{nama_bunga.upper()}** ({bunga_info['nama_latin']})\n"
+        deskripsi += "─" * 55 + "\n"
         for fakta in bunga_info['fakta']:
-            deskripsi += f"<div class='fact-item'>{fakta}</div>\n"
+            deskripsi += f"{fakta}\n"
         return deskripsi
-    return f"⚠️ Deskripsi untuk {nama_bunga} belum tersedia"
+    return f"\n⚠️ Deskripsi untuk {nama_bunga} belum tersedia\n"
 # ===================================================
 
 @st.cache_resource
@@ -256,22 +106,12 @@ if model is None:
     st.error("❌ Gagal load model")
     st.stop()
 
-# ============ UPLOAD AREA ============
-st.markdown('<div class="card">', unsafe_allow_html=True)
-st.markdown('<div class="upload-area">', unsafe_allow_html=True)
-
-uploaded = st.file_uploader("📤 Pilih gambar bunga", type=['jpg','png','jpeg'])
-
-st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-
+uploaded = st.file_uploader("Upload gambar bunga", type=['jpg','png','jpeg'])
 if uploaded:
     img = Image.open(uploaded)
     st.image(img, use_column_width=True)
     
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    
-    if st.button("🔍 Klasifikasikan!"):
+    if st.button("Klasifikasi!"):
         img = img.resize((224,224))
         x = np.array(img) / 255.0
         x = np.expand_dims(x, axis=0)
@@ -281,43 +121,18 @@ if uploaded:
         nama = class_names[idx]
         acc = pred[0][idx] * 100
         
-        # ============ HASIL PREDIKSI ============
-        st.markdown('<div class="result-card">', unsafe_allow_html=True)
+        # Hasil prediksi
+        st.success(f"✅ **{nama.upper()}**")
+        st.info(f"📊 {acc:.2f}%")
         
-        st.markdown(f"""
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="flower-name">🌸 {nama.upper()}</span>
-            <span class="accuracy">🎯 {acc:.2f}%</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # ============ DESKRIPSI ============
-        st.markdown('<div class="desc-box">', unsafe_allow_html=True)
+        # ============ TAMPILKAN DESKRIPSI ============
         deskripsi = get_deskripsi_bunga(nama)
-        st.markdown(deskripsi, unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown(deskripsi)
+        # =============================================
         
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # ============ PROBABILITAS ============
-        st.markdown("### 📊 Probabilitas per Kelas")
+        # Probabilitas per kelas
+        st.write("**Probabilitas per Kelas:**")
         for i, name in enumerate(class_names):
             prob = pred[0][i] * 100
-            st.markdown(f"""
-            <div class="prob-item">
-                <div class="prob-label">
-                    <span>{name.capitalize()}</span>
-                    <span>{prob:.1f}%</span>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
             st.progress(int(prob) / 100)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ============ FOOTER ============
-st.markdown("""
-<div style="text-align: center; padding: 2rem 0 0 0; color: #888; font-size: 0.9rem;">
-    ✨ Dibuat dengan Streamlit & TensorFlow
-</div>
-""", unsafe_allow_html=True)
+            st.write(f"{name}: {prob:.1f}%")
