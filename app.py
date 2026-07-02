@@ -425,12 +425,44 @@ st.markdown("""
 # ============ HEADER ============
 st.markdown("""
 <div class="header">
-    <div style="font-size: 3.5rem; margin-bottom: 0.3rem; letter-spacing: 10px;">
+    <div style="font-size: 3.8rem; margin-bottom: 0.5rem; letter-spacing: 12px; line-height: 1.4;">
         🌸 🌺 🌷 🌻 🪷
     </div>
-    <h1>Identifikasi Bunga</h1>
-    <p>📸 Upload gambar untuk mengetahui jenis bunganya secara instan</p>
-    <span class="badge">🤖 Didukung AI &nbsp;·&nbsp; 5 Jenis Bunga</span>
+    <h1 style="
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin: 0.3rem 0 0.2rem 0;
+        color: #d63384;
+        letter-spacing: 4px;
+        text-shadow: 2px 2px 30px rgba(214, 51, 132, 0.12);
+    ">
+        Identifikasi Bunga
+    </h1>
+    <p style="
+        font-family: 'Quicksand', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #6a1b4d;
+        margin: 0.5rem 0 0.8rem 0;
+        letter-spacing: 0.5px;
+        opacity: 0.85;
+    ">
+        📸 Upload gambar untuk mengetahui jenis bunganya secara instan
+    </p>
+    <span style="
+        display: inline-block;
+        font-family: 'Quicksand', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #880e4f;
+        background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+        padding: 0.4rem 1.8rem;
+        border-radius: 50px;
+        border: 1px solid rgba(233, 30, 99, 0.1);
+        letter-spacing: 0.5px;
+    ">
+    </span>
 </div>
 """, unsafe_allow_html=True)
 
