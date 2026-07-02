@@ -12,7 +12,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS dengan Background Pink Soft
+# CSS dengan Background Pink Soft - Tanpa Sidebar
 st.markdown("""
 <style>
     /* Background pink soft */
@@ -20,9 +20,18 @@ st.markdown("""
         background: linear-gradient(135deg, #ffe4e1 0%, #ffd1dc 50%, #ffb6c1 100%);
     }
     
+    /* Hilangkan sidebar default */
+    .css-1d391kg, .css-1lcbmhc {
+        display: none;
+    }
+    
+    .stSidebar {
+        display: none;
+    }
+    
     /* Container utama */
     .main-container {
-        max-width: 800px;
+        max-width: 700px;
         margin: 0 auto;
         padding: 1rem;
     }
@@ -30,20 +39,19 @@ st.markdown("""
     /* Header */
     .header {
         text-align: center;
-        padding: 2rem;
+        padding: 2rem 1.5rem;
         background: rgba(255, 255, 255, 0.7);
         border-radius: 20px;
         margin-bottom: 2rem;
         backdrop-filter: blur(10px);
-        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
     }
     
     .header h1 {
         color: #4a1942;
-        font-size: 2.8rem;
+        font-size: 2.5rem;
         margin: 0;
         font-weight: 700;
-        text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.3);
     }
     
     .header p {
@@ -129,7 +137,7 @@ st.markdown("""
     /* Upload area */
     .upload-area {
         background: rgba(255, 255, 255, 0.7);
-        padding: 2rem;
+        padding: 2.5rem 2rem;
         border-radius: 20px;
         border: 2px dashed #ffb6c1;
         text-align: center;
@@ -154,6 +162,7 @@ st.markdown("""
         font-size: 1.1rem;
         transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(232, 138, 158, 0.3);
+        margin-top: 1rem;
     }
     
     .stButton > button:hover {
@@ -190,39 +199,12 @@ st.markdown("""
         transition: width 0.8s ease;
     }
     
-    /* Sidebar */
-    .sidebar-box {
-        background: rgba(255, 255, 255, 0.7);
-        padding: 1.2rem;
-        border-radius: 15px;
-        margin: 0.7rem 0;
-        backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.5);
-    }
-    
-    .sidebar-box h4 {
-        color: #4a1942;
-        margin: 0 0 0.5rem 0;
-        font-size: 1.1rem;
-    }
-    
-    .sidebar-box p {
-        color: #6b3a5a;
-        font-size: 0.95rem;
-        margin: 0.3rem 0;
-    }
-    
-    .sidebar-box .flower-list {
-        color: #4a1942;
-        margin: 0.2rem 0;
-        font-weight: 500;
-    }
-    
     /* Upload label */
     .stFileUploader > div > button {
         background: #e88a9e !important;
         color: white !important;
         border-radius: 10px !important;
+        border: none !important;
     }
     
     .stFileUploader > div > button:hover {
@@ -240,11 +222,54 @@ st.markdown("""
         overflow: hidden;
         box-shadow: 0 4px 20px rgba(255, 182, 193, 0.3);
         border: 3px solid rgba(255, 255, 255, 0.5);
+        margin: 1rem 0;
+    }
+    
+    /* Info tambahan di bawah */
+    .flower-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+    }
+    
+    .flower-item {
+        background: rgba(255, 255, 255, 0.5);
+        padding: 0.5rem;
+        border-radius: 10px;
+        text-align: center;
+        color: #4a1942;
+        font-weight: 500;
+    }
+    
+    .tips-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+    }
+    
+    .tip-item {
+        background: rgba(255, 255, 255, 0.5);
+        padding: 0.5rem;
+        border-radius: 10px;
+        text-align: center;
+        color: #6b3a5a;
+        font-size: 0.9rem;
+    }
+    
+    /* Footer */
+    .footer {
+        text-align: center;
+        padding: 2rem 0 1rem 0;
+        color: #6b3a5a;
+        font-size: 0.9rem;
+        opacity: 0.7;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Header
+# ============ HEADER ============
 st.markdown("""
 <div class="header">
     <h1>🌸 Klasifikasi Bunga</h1>
@@ -252,29 +277,36 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Sidebar
-with st.sidebar:
+# ============ INFORMASI BUNGA & TIPS ============
+col1, col2 = st.columns(2)
+
+with col1:
     st.markdown("""
-    <div class="sidebar-box">
-        <h4>🌸 5 Jenis Bunga</h4>
-        <p class="flower-list">🌷 Tulip</p>
-        <p class="flower-list">🌸 Lily</p>
-        <p class="flower-list">🌺 Orchid</p>
-        <p class="flower-list">🌻 Sunflower</p>
-        <p class="flower-list">🪷 Lotus</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="sidebar-box">
-        <h4>💡 Tips</h4>
-        <p>📸 Gunakan gambar dengan latar bersih</p>
-        <p>🌞 Pastikan pencahayaan cukup</p>
-        <p>🖼️ Format JPG atau PNG</p>
+    <div class="info-card">
+        <div class="title">🌺 5 Jenis Bunga</div>
+        <div class="flower-info-grid">
+            <div class="flower-item">🌷 Tulip</div>
+            <div class="flower-item">🌸 Lily</div>
+            <div class="flower-item">🌺 Orchid</div>
+            <div class="flower-item">🌻 Sunflower</div>
+            <div class="flower-item">🪷 Lotus</div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-# Database deskripsi
+with col2:
+    st.markdown("""
+    <div class="info-card">
+        <div class="title">💡 Tips</div>
+        <div class="tips-grid">
+            <div class="tip-item">📸 Latar bersih</div>
+            <div class="tip-item">☀️ Cukup cahaya</div>
+            <div class="tip-item">🖼️ JPG/PNG</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ============ DATABASE DESKRIPSI ============
 BUNGA_DESKRIPSI = {
     'tulip': {
         'nama_latin': 'Tulipa',
@@ -324,12 +356,9 @@ BUNGA_DESKRIPSI = {
 }
 
 def get_deskripsi(nama):
-    info = BUNGA_DESKRIPSI.get(nama.lower())
-    if info:
-        return info
-    return None
+    return BUNGA_DESKRIPSI.get(nama.lower())
 
-# Load model
+# ============ LOAD MODEL ============
 @st.cache_resource
 def load_model():
     model_path = 'model_bunga_densenet121.h5'
@@ -365,7 +394,7 @@ if model is None:
 
 class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
 
-# Upload dan prediksi
+# ============ UPLOAD & PREDIKSI ============
 uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'])
 
 if uploaded:
@@ -376,25 +405,22 @@ if uploaded:
     
     if st.button("🔍 Klasifikasikan!"):
         with st.spinner("⏳ Memproses..."):
-            # Preprocessing
-            img = img.resize((224, 224))
-            x = np.array(img) / 255.0
+            img_resized = img.resize((224, 224))
+            x = np.array(img_resized) / 255.0
             x = np.expand_dims(x, axis=0)
             
-            # Prediksi
             pred = model.predict(x)
             idx = np.argmax(pred[0])
             nama = class_names[idx]
             akurasi = pred[0][idx] * 100
             
-            # Simpan hasil
             st.session_state['hasil'] = {
                 'nama': nama,
                 'akurasi': akurasi,
                 'probabilitas': pred[0]
             }
 
-# Tampilkan hasil
+# ============ TAMPILKAN HASIL ============
 if 'hasil' in st.session_state:
     hasil = st.session_state['hasil']
     nama = hasil['nama']
@@ -431,7 +457,7 @@ if 'hasil' in st.session_state:
         
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # Probabilitas per kelas
+    # Probabilitas
     st.markdown("""
     <div class="info-card">
         <div class="title">📊 Probabilitas</div>
@@ -453,9 +479,9 @@ if 'hasil' in st.session_state:
     
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Footer
+# ============ FOOTER ============
 st.markdown("""
-<div style="text-align: center; padding: 2rem 0 1rem 0; color: #6b3a5a; font-size: 0.9rem; opacity: 0.7;">
+<div class="footer">
     🌸 Selamat mencoba! 🌸
 </div>
 """, unsafe_allow_html=True)
