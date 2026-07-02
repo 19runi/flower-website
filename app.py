@@ -32,6 +32,15 @@ st.markdown("""
         display: none;
     }
     
+    /* Hilangkan teks hitam di bawah upload */
+    .stFileUploader > div > div > div > small {
+        display: none !important;
+    }
+    
+    .stFileUploader > div > div > div > div > div {
+        display: none !important;
+    }
+    
     /* Header */
     .header {
         text-align: center;
@@ -107,7 +116,39 @@ st.markdown("""
         opacity: 0.7;
     }
     
-    /* Tombol */
+    /* Tombol upload - custom */
+    .stFileUploader > div > button {
+        font-family: 'Quicksand', sans-serif !important;
+        font-weight: 600 !important;
+        background: linear-gradient(135deg, #e88a9e, #d4708a) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        border: none !important;
+        padding: 0.7rem 2rem !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    .stFileUploader > div > button:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 4px 20px rgba(232, 138, 158, 0.4) !important;
+    }
+    
+    /* Hilangkan semua teks tambahan di upload */
+    .stFileUploader > div > div > div > div {
+        display: none !important;
+    }
+    
+    .stFileUploader > div > div > div > small {
+        display: none !important;
+    }
+    
+    .stFileUploader > div > div > div > div > div {
+        display: none !important;
+    }
+    
+    /* Tombol klasifikasi */
     .stButton > button {
         width: 100%;
         font-family: 'Quicksand', sans-serif;
@@ -128,24 +169,6 @@ st.markdown("""
         transform: translateY(-2px);
         box-shadow: 0 6px 25px rgba(232, 138, 158, 0.5);
         background: linear-gradient(135deg, #d4708a, #c05d78);
-    }
-    
-    /* Upload label */
-    .stFileUploader > div > button {
-        font-family: 'Quicksand', sans-serif !important;
-        font-weight: 600 !important;
-        background: #e88a9e !important;
-        color: white !important;
-        border-radius: 12px !important;
-        border: none !important;
-        padding: 0.6rem 1.5rem !important;
-        font-size: 1rem !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    .stFileUploader > div > button:hover {
-        background: #d4708a !important;
-        transform: scale(1.02);
     }
     
     /* Image preview */
@@ -264,7 +287,7 @@ st.markdown("""
         margin: 0;
     }
     
-    /* ============ INFO BUNGA YANG LEBIH MENARIK ============ */
+    /* Info card */
     .info-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,250,0.95));
         padding: 1.8rem;
@@ -374,7 +397,7 @@ st.markdown("""
         margin-right: 5px;
     }
     
-    /* ============ PROBABILITAS YANG LEBIH MENARIK ============ */
+    /* Prob card */
     .prob-card {
         background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,250,0.95));
         padding: 1.8rem;
@@ -488,7 +511,6 @@ st.markdown("""
         100% { transform: translateX(100%); }
     }
     
-    /* Warna berbeda untuk setiap bunga */
     .prob-item:nth-child(1) .fill { background: linear-gradient(90deg, #e88a9e, #d4708a); }
     .prob-item:nth-child(2) .fill { background: linear-gradient(90deg, #f7a1b5, #e88a9e); }
     .prob-item:nth-child(3) .fill { background: linear-gradient(90deg, #d4a0c5, #b880a8); }
@@ -673,7 +695,7 @@ if 'hasil' in st.session_state:
     </div>
     """, unsafe_allow_html=True)
     
-    # ============ INFO BUNGA YANG LEBIH MENARIK ============
+    # Info card
     info = get_deskripsi(nama)
     if info:
         st.markdown(f"""
@@ -699,7 +721,7 @@ if 'hasil' in st.session_state:
         
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # ============ PROBABILITAS YANG LEBIH MENARIK ============
+    # Prob card
     st.markdown("""
     <div class="prob-card">
         <div class="title-wrapper">
