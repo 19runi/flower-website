@@ -707,5 +707,3 @@ st.markdown("""
     🌸 Selamat mencoba! 🌸
 </div>
 """, unsafe_allow_html=True)
-
-PERBAIKI LOGIKA, NGGAK BISA BACA GAMBAR
