@@ -32,12 +32,28 @@ st.markdown("""
         display: none;
     }
     
-    /* Hilangkan teks hitam di bawah upload */
+    /* ============ HILANGKAN SEMUA TEKS DI UPLOAD ============ */
+    .stFileUploader > div > div {
+        display: none !important;
+    }
+    
+    .stFileUploader > div > div > div {
+        display: none !important;
+    }
+    
+    .stFileUploader > div > div > div > div {
+        display: none !important;
+    }
+    
     .stFileUploader > div > div > div > small {
         display: none !important;
     }
     
     .stFileUploader > div > div > div > div > div {
+        display: none !important;
+    }
+    
+    .stFileUploader small {
         display: none !important;
     }
     
@@ -71,9 +87,9 @@ st.markdown("""
         letter-spacing: 1px;
     }
     
-    /* Upload area */
+    /* Upload area - kotak putih */
     .upload-area {
-        background: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.9);
         padding: 3rem 2rem;
         border-radius: 25px;
         border: 3px dashed #e88a9e;
@@ -81,6 +97,7 @@ st.markdown("""
         backdrop-filter: blur(10px);
         box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
         transition: all 0.3s ease;
+        margin-bottom: 1rem;
     }
     
     .upload-area:hover {
@@ -116,7 +133,7 @@ st.markdown("""
         opacity: 0.7;
     }
     
-    /* Tombol upload - custom */
+    /* Tombol upload */
     .stFileUploader > div > button {
         font-family: 'Quicksand', sans-serif !important;
         font-weight: 600 !important;
@@ -128,24 +145,13 @@ st.markdown("""
         font-size: 1rem !important;
         transition: all 0.3s ease !important;
         margin: 0.5rem 0 !important;
+        position: relative !important;
+        z-index: 10 !important;
     }
     
     .stFileUploader > div > button:hover {
         transform: scale(1.05) !important;
         box-shadow: 0 4px 20px rgba(232, 138, 158, 0.4) !important;
-    }
-    
-    /* Hilangkan semua teks tambahan di upload */
-    .stFileUploader > div > div > div > div {
-        display: none !important;
-    }
-    
-    .stFileUploader > div > div > div > small {
-        display: none !important;
-    }
-    
-    .stFileUploader > div > div > div > div > div {
-        display: none !important;
     }
     
     /* Tombol klasifikasi */
@@ -641,7 +647,8 @@ emoji_map = {
     'lotus': '🪷'
 }
 
-# ============ UPLOAD AREA ============
+# ============ UPLOAD AREA - KOTAK PUTIH ============
+# Tampilkan kotak putih dengan teks
 st.markdown("""
 <div class="upload-area">
     <p class="main-text">📸 Upload Gambar Bunga</p>
@@ -650,6 +657,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Uploader - semua logika ada di sini
 uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
 
 if uploaded:
