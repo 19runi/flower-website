@@ -14,16 +14,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ============ HILANGKAN DEFAULT STREAMLIT ============
+# ============ HILANGKAN SEMUA ELEMEN DEFAULT STREAMLIT ============
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
             header {visibility: hidden;}
-            .stFileUploader > div > div > div > div {display: none;}
-            .stFileUploader > div > div {padding: 0 !important;}
-            .stFileUploader > div > div > div {background: transparent !important; border: none !important; padding: 0 !important;}
-            .stFileUploader label {display: none !important;}
+            .stFileUploader {visibility: hidden !important; height: 0 !important; padding: 0 !important; margin: 0 !important;}
+            .stFileUploader > div {display: none !important;}
             div[data-testid="stToolbar"] {display: none !important;}
             .main > div {padding-top: 0rem; padding-bottom: 0rem;}
             .stApp {background: #fdf6f9;}
@@ -45,7 +43,6 @@ st.markdown("""
         background: linear-gradient(160deg, #fdf6f9 0%, #fce4ec 35%, #f8e8f5 65%, #f3e5f5 100%);
     }
 
-    /* HEADER */
     .header {
         text-align: center;
         padding: 25px 0 15px 0;
@@ -74,7 +71,6 @@ st.markdown("""
         opacity: 0.8;
     }
 
-    /* CARD */
     .card {
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(15px);
@@ -103,7 +99,7 @@ st.markdown("""
         padding-bottom: 12px;
     }
 
-    /* UPLOAD AREA - SATU AJA */
+    /* UPLOAD BOX - SATU AREA */
     .upload-box {
         border: 2.5px dashed #f8bbd0;
         border-radius: 24px;
@@ -123,7 +119,6 @@ st.markdown("""
     .upload-box .main { font-weight: 700; font-size: 1.2rem; color: #3d2a35; }
     .upload-box .sub { color: #b08a9a; font-size: 0.85rem; margin-top: 5px; }
 
-    /* STATUS */
     .status {
         text-align: center;
         font-size: 0.8rem;
@@ -135,7 +130,6 @@ st.markdown("""
         margin-bottom: 18px;
     }
 
-    /* TOMBOL */
     .stButton > button {
         background: linear-gradient(135deg, #f06292, #ab47bc) !important;
         color: white !important;
@@ -155,7 +149,6 @@ st.markdown("""
         box-shadow: 0 12px 40px rgba(240, 98, 146, 0.45) !important;
     }
 
-    /* HASIL */
     .result-card {
         background: linear-gradient(135deg, #fff5f8, #fce4ec);
         border-radius: 18px;
@@ -171,7 +164,6 @@ st.markdown("""
     .result-name { font-size: 2.6rem; font-weight: 700; color: #2d1b26; }
     .result-acc { font-size: 2rem; font-weight: 700; color: #81c784; text-align: right; }
 
-    /* DESKRIPSI */
     .desc-box {
         background: rgba(255, 255, 255, 0.5);
         border-radius: 16px;
@@ -183,7 +175,6 @@ st.markdown("""
     .desc-item { padding: 4px 0; font-size: 0.9rem; color: #3d2a35; border-bottom: 1px solid rgba(0,0,0,0.03); }
     .desc-item:last-child { border-bottom: none; }
 
-    /* FOOTER */
     .footer {
         text-align: center;
         padding: 25px 0 15px 0;
@@ -196,7 +187,6 @@ st.markdown("""
     .footer .love { color: #f06292; }
     .footer span { margin: 0 6px; }
 
-    /* RESPONSIF */
     @media (max-width: 768px) {
         .header h1 { font-size: 2.2rem; }
         .result-name { font-size: 1.8rem; }
@@ -260,7 +250,7 @@ with col1:
     st.markdown('<div class="card-title">📸 Upload Gambar</div>')
     st.markdown('<div class="status">✅ Model siap digunakan</div>')
     
-    # UPLOAD - SATU AREA
+    # ============ UPLOAD - HANYA 1 AREA ============
     uploaded = st.file_uploader("", type=['jpg','png','jpeg'], label_visibility="collapsed")
     
     if not uploaded:
