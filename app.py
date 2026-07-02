@@ -5,243 +5,163 @@ from PIL import Image
 import os
 import requests
 import re
-import base64
 
-# Konfigurasi halaman
-st.set_page_config(
-    page_title="Klasifikasi Bunga", 
-    page_icon="🌸",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+st.set_page_config(page_title="Klasifikasi Bunga", page_icon="🌸")
 
-# Custom CSS untuk desain yang lebih menarik
+# ============ CUSTOM CSS UNTUK DESAIN ============
 st.markdown("""
 <style>
-    /* Background dan styling utama */
-    .stApp {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    /* Styling utama */
+    .main {
+        padding: 0rem 1rem;
     }
     
     /* Header styling */
-    .main-header {
+    .header-container {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
-        border-radius: 20px;
-        text-align: center;
-        color: white;
+        padding: 1.5rem;
+        border-radius: 15px;
         margin-bottom: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        animation: fadeInDown 0.8s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-align: center;
     }
     
-    .main-header h1 {
-        font-size: 3rem;
-        margin: 0;
+    .header-container h1 {
+        color: white;
+        font-size: 2.5rem;
         font-weight: 700;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        margin: 0;
     }
     
-    .main-header p {
-        font-size: 1.2rem;
-        opacity: 0.9;
-        margin-top: 0.5rem;
+    .header-container p {
+        color: rgba(255,255,255,0.9);
+        font-size: 1.1rem;
+        margin: 0.5rem 0 0 0;
     }
     
     /* Card styling */
-    .upload-card {
+    .card {
         background: white;
-        padding: 2rem;
-        border-radius: 20px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        margin-bottom: 2rem;
-    }
-    
-    .upload-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-    }
-    
-    /* Hasil prediksi styling */
-    .result-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 20px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        margin-top: 2rem;
-        animation: fadeInUp 0.6s ease;
-    }
-    
-    .result-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        text-align: center;
-        padding: 1rem;
-        border-radius: 15px;
-        margin-bottom: 1.5rem;
-    }
-    
-    .result-title.tulip {
-        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-        color: white;
-    }
-    .result-title.lily {
-        background: linear-gradient(135deg, #fda085, #f6d365);
-        color: white;
-    }
-    .result-title.orchid {
-        background: linear-gradient(135deg, #a8edea, #fed6e3);
-        color: #2d3436;
-    }
-    .result-title.sunflower {
-        background: linear-gradient(135deg, #f6d365, #fda085);
-        color: white;
-    }
-    .result-title.lotus {
-        background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
-        color: #2d3436;
-    }
-    
-    .accuracy-badge {
-        display: inline-block;
-        background: linear-gradient(135deg, #00b894, #00cec9);
-        color: white;
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 1.2rem;
-        margin: 0.5rem 0;
-    }
-    
-    /* Deskripsi styling */
-    .description-box {
-        background: linear-gradient(135deg, #dfe6e9, #b2bec3);
         padding: 1.5rem;
-        border-radius: 15px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        margin-bottom: 1.5rem;
+        border: 1px solid #f0f0f0;
+    }
+    
+    /* Upload area styling */
+    .upload-area {
+        border: 2px dashed #667eea;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        background: #f8f9ff;
+        transition: all 0.3s ease;
+    }
+    
+    .upload-area:hover {
+        background: #f0f2ff;
+        border-color: #764ba2;
+    }
+    
+    /* Result card */
+    .result-card {
+        background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 5px solid #667eea;
+        margin-top: 1rem;
+    }
+    
+    .flower-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d3436;
+        margin: 0;
+    }
+    
+    .accuracy {
+        font-size: 1.2rem;
+        color: #00b894;
+        font-weight: 600;
+    }
+    
+    /* Description styling */
+    .desc-box {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
         margin: 1rem 0;
-        border-left: 5px solid #6c5ce7;
     }
     
     .fact-item {
         padding: 0.5rem;
-        margin: 0.5rem 0;
-        background: rgba(255,255,255,0.6);
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-    
-    .fact-item:hover {
-        transform: translateX(10px);
+        margin: 0.3rem 0;
+        border-radius: 6px;
         background: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-left: 3px solid #667eea;
     }
     
-    /* Progress bar styling */
-    .progress-container {
-        background: white;
-        padding: 1rem;
-        border-radius: 15px;
+    /* Progress bar container */
+    .prob-item {
         margin: 0.5rem 0;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 0.3rem;
+        border-radius: 6px;
+        background: #f8f9fa;
     }
     
-    .progress-label {
+    .prob-label {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.2rem;
+        font-size: 0.9rem;
         font-weight: 500;
+        margin-bottom: 0.2rem;
     }
     
     /* Custom progress bar */
     .stProgress > div > div {
         background: linear-gradient(90deg, #667eea, #764ba2) !important;
-        border-radius: 10px !important;
     }
     
-    /* Upload button styling */
+    /* Button styling */
     .stButton > button {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         font-weight: 600;
-        padding: 0.75rem 2rem;
+        padding: 0.6rem 2rem;
         border: none;
-        border-radius: 50px;
+        border-radius: 8px;
         transition: all 0.3s ease;
         width: 100%;
-        font-size: 1.1rem;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
     
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
     }
     
-    /* File uploader styling */
-    .uploaded-file {
-        border: 2px dashed #667eea;
-        border-radius: 15px;
-        padding: 2rem;
-        text-align: center;
-        background: rgba(255,255,255,0.5);
-        transition: all 0.3s ease;
+    /* Image styling */
+    .stImage {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
     
-    .uploaded-file:hover {
-        border-color: #764ba2;
-        background: rgba(255,255,255,0.8);
-    }
-    
-    /* Animations */
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .main-header h1 {
-            font-size: 2rem;
-        }
-        .result-title {
-            font-size: 1.8rem;
-        }
-    }
-    
-    /* Spinner styling */
-    .stSpinner > div {
-        border-color: #667eea !important;
+    /* Success/Info boxes */
+    .stAlert {
+        border-radius: 10px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Header yang menarik
+# ============ HEADER ============
 st.markdown("""
-<div class="main-header">
+<div class="header-container">
     <h1>🌸 Klasifikasi Jenis Bunga</h1>
-    <p>Upload gambar bunga dan temukan keindahan di balik setiap kelopaknya</p>
+    <p>Upload gambar bunga untuk mengetahui jenisnya!</p>
 </div>
 """, unsafe_allow_html=True)
 
-# Definisi class names
 class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
 
 # ============ DATABASE DESKRIPSI BUNGA ============
@@ -296,11 +216,11 @@ BUNGA_DESKRIPSI = {
 def get_deskripsi_bunga(nama_bunga):
     bunga_info = BUNGA_DESKRIPSI.get(nama_bunga.lower())
     if bunga_info:
-        deskripsi = f"### 🌿 **{nama_bunga.upper()}** *({bunga_info['nama_latin']})*\n"
+        deskripsi = f"### 🌿 **{nama_bunga.upper()}** *({bunga_info['nama_latin']})*\n\n"
         for fakta in bunga_info['fakta']:
-            deskripsi += f"\n{fakta}"
+            deskripsi += f"<div class='fact-item'>{fakta}</div>\n"
         return deskripsi
-    return f"\n⚠️ Deskripsi untuk {nama_bunga} belum tersedia\n"
+    return f"⚠️ Deskripsi untuk {nama_bunga} belum tersedia"
 # ===================================================
 
 @st.cache_resource
@@ -336,25 +256,22 @@ if model is None:
     st.error("❌ Gagal load model")
     st.stop()
 
-# Upload area dengan design yang menarik
-st.markdown('<div class="upload-card">', unsafe_allow_html=True)
+# ============ UPLOAD AREA ============
+st.markdown('<div class="card">', unsafe_allow_html=True)
+st.markdown('<div class="upload-area">', unsafe_allow_html=True)
 
-uploaded = st.file_uploader(
-    "📤 Pilih gambar bunga", 
-    type=['jpg','png','jpeg'],
-    help="Upload gambar dengan format JPG, PNG, atau JPEG"
-)
+uploaded = st.file_uploader("📤 Pilih gambar bunga", type=['jpg','png','jpeg'])
+
+st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 if uploaded:
     img = Image.open(uploaded)
+    st.image(img, use_column_width=True)
     
-    # Tampilan gambar dengan styling
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image(img, use_column_width=True, caption="📸 Gambar yang diupload")
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     
-    # Tombol klasifikasi dengan styling
-    if st.button("🔍 Klasifikasikan Bunga!", use_container_width=True):
+    if st.button("🔍 Klasifikasikan!"):
         img = img.resize((224,224))
         x = np.array(img) / 255.0
         x = np.expand_dims(x, axis=0)
@@ -364,54 +281,43 @@ if uploaded:
         nama = class_names[idx]
         acc = pred[0][idx] * 100
         
-        # Hasil prediksi
-        st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
+        # ============ HASIL PREDIKSI ============
+        st.markdown('<div class="result-card">', unsafe_allow_html=True)
         
-        # Title dengan warna sesuai kelas
-        color_class = nama.lower()
         st.markdown(f"""
-        <div class="result-title {color_class}">
-            🌸 {nama.upper()}
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="flower-name">🌸 {nama.upper()}</span>
+            <span class="accuracy">🎯 {acc:.2f}%</span>
         </div>
         """, unsafe_allow_html=True)
         
-        # Accuracy badge
-        st.markdown(f"""
-        <div style="text-align: center;">
-            <span class="accuracy-badge">🎯 Akurasi: {acc:.2f}%</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # ============ TAMPILKAN DESKRIPSI ============
+        # ============ DESKRIPSI ============
+        st.markdown('<div class="desc-box">', unsafe_allow_html=True)
         deskripsi = get_deskripsi_bunga(nama)
-        st.markdown(f"""
-        <div class="description-box">
-            {deskripsi}
-        </div>
-        """, unsafe_allow_html=True)
-        # =============================================
+        st.markdown(deskripsi, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
         
-        # Probabilitas per kelas
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # ============ PROBABILITAS ============
         st.markdown("### 📊 Probabilitas per Kelas")
         for i, name in enumerate(class_names):
             prob = pred[0][i] * 100
             st.markdown(f"""
-            <div class="progress-container">
-                <div class="progress-label">
+            <div class="prob-item">
+                <div class="prob-label">
                     <span>{name.capitalize()}</span>
                     <span>{prob:.1f}%</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
             st.progress(int(prob) / 100)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
-
-# Footer
+# ============ FOOTER ============
 st.markdown("""
-<div style="text-align: center; padding: 2rem; color: #666; margin-top: 2rem;">
-    <small>✨ Dibuat dengan ❤️ menggunakan Streamlit & TensorFlow</small>
+<div style="text-align: center; padding: 2rem 0 0 0; color: #888; font-size: 0.9rem;">
+    ✨ Dibuat dengan Streamlit & TensorFlow
 </div>
 """, unsafe_allow_html=True)
