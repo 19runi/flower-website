@@ -5,6 +5,7 @@ from PIL import Image
 import os
 import requests
 import re
+import base64
 
 # ============ KONFIGURASI ============
 st.set_page_config(
@@ -14,21 +15,56 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ============ HILANGKAN SEMUA ELEMEN DEFAULT STREAMLIT ============
-hide_st_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            .stFileUploader {visibility: hidden !important; height: 0 !important; padding: 0 !important; margin: 0 !important;}
-            .stFileUploader > div {display: none !important;}
-            div[data-testid="stToolbar"] {display: none !important;}
-            .main > div {padding-top: 0rem; padding-bottom: 0rem;}
-            .stApp {background: #fdf6f9;}
-            .stProgress > div > div {background: linear-gradient(90deg, #f06292, #ab47bc) !important; border-radius: 20px !important; height: 20px !important;}
-            </style>
-            """
-st.markdown(hide_st_style, unsafe_allow_html=True)
+# ============ HILANGKAN DEFAULT UPLOAD ============
+st.markdown("""
+<style>
+    /* HILANGKAN SEMUA UPLOAD DEFAULT */
+    .stFileUploader {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        position: absolute !important;
+        top: -9999px !important;
+        left: -9999px !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+    .stFileUploader > div {
+        display: none !important;
+        height: 0 !important;
+    }
+    .stFileUploader label {
+        display: none !important;
+    }
+    .stFileUploader > div > div {
+        display: none !important;
+    }
+    .stFileUploader > div > div > div {
+        display: none !important;
+    }
+    .stFileUploader input[type="file"] {
+        display: none !important;
+        position: absolute !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+    /* HILANGKAN ELEMEN LAIN */
+    #MainMenu {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    header {visibility: hidden !important;}
+    div[data-testid="stToolbar"] {display: none !important;}
+    .main > div {padding-top: 0rem; padding-bottom: 0rem;}
+    .stApp {background: #fdf6f9;}
+    .stProgress > div > div {
+        background: linear-gradient(90deg, #f06292, #ab47bc) !important;
+        border-radius: 20px !important;
+        height: 20px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # ============ CSS PINK SOFT ============
 st.markdown("""
@@ -108,6 +144,7 @@ st.markdown("""
         background: rgba(255, 255, 255, 0.3);
         transition: all 0.4s ease;
         cursor: pointer;
+        position: relative;
     }
     .upload-box:hover {
         border-color: #f06292;
@@ -118,6 +155,17 @@ st.markdown("""
     .upload-box .icon { font-size: 4rem; display: block; margin-bottom: 8px; }
     .upload-box .main { font-weight: 700; font-size: 1.2rem; color: #3d2a35; }
     .upload-box .sub { color: #b08a9a; font-size: 0.85rem; margin-top: 5px; }
+    
+    /* HIDE INPUT FILE */
+    .upload-box input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
 
     .status {
         text-align: center;
@@ -253,9 +301,10 @@ with col1:
     # ============ UPLOAD - HANYA 1 AREA ============
     uploaded = st.file_uploader("", type=['jpg','png','jpeg'], label_visibility="collapsed")
     
+    # TAMPILAN CUSTOM
     if not uploaded:
         st.markdown("""
-        <div class="upload-box">
+        <div class="upload-box" onclick="document.querySelector('input[type=file]').click()">
             <span class="icon">🌸</span>
             <div class="main">Klik atau seret gambar</div>
             <div class="sub">JPG, PNG, JPEG • Maks 200MB</div>
