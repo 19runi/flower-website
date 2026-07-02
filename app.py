@@ -1,335 +1,125 @@
-# ============================================
-# WEBSITE KLASIFIKASI BUNGA DENGAN STREAMLIT
-# ============================================
-
-import streamlit as st
-import tensorflow as tf
-from tensorflow.keras.preprocessing import image
 import numpy as np
-from PIL import Image
-import os
+from google.colab import files
+from tensorflow.keras.preprocessing import image
+import matplotlib.pyplot as plt
+import tensorflow as tf
 
-# ============================================
-# 1. SETUP HALAMAN
-# ============================================
-st.set_page_config(
-    page_title="Klasifikasi Bunga",
-    page_icon="🌸",
-    layout="centered"
-)
-
-# ============================================
-# 2. LOAD MODEL
-# ============================================
-@st.cache_resource
-def load_model():
-    """Memuat model yang sudah dilatih"""
-    try:
-        model = tf.keras.models.load_model('model_bunga_densenet121.h5')
-        return model
-    except Exception as e:
-        st.error(f"❌ Model tidak ditemukan! Pastikan file 'model_bunga_densenet121.h5' ada di folder yang sama.")
-        st.error(f"Detail error: {str(e)}")
-        return None
-
-# ============================================
-# 3. DATA BUNGA
-# ============================================
-class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
-
-BUNGA_DESKRIPSI = {
-    'tulip': {
-        'nama_latin': 'Tulipa',
-        'fakta': [
-            '🌷 Tulip berasal dari Asia Tengah dan menjadi simbol nasional Belanda',
-            '🌷 Ada lebih dari 3.000 varietas tulip yang terdaftar secara resmi',
-            '🌷 Warna tulip memiliki makna: merah melambangkan cinta, kuning melambangkan kegembiraan',
-            '🌷 Pada abad ke-17, Belanda mengalami "Tulip Mania"'
-        ]
-    },
+# Dictionary deskripsi bunga
+bunga_deskripsi = {
     'lily': {
-        'nama_latin': 'Lilium',
-        'fakta': [
-            '🌸 Lily adalah salah satu bunga tertua, sudah ada sejak 3.000 tahun SM',
-            '🌸 Bunga lily memiliki 6 kelopak dan melambangkan kemurnian',
-            '🌸 Di Yunani kuno, lily adalah bunga dewi Hera',
-            '🌸 Beberapa spesies lily dapat tumbuh hingga 2,5 meter'
-        ]
-    },
-    'orchid': {
-        'nama_latin': 'Orchidaceae',
-        'fakta': [
-            '🌺 Anggrek memiliki lebih dari 28.000 spesies',
-            '🌺 Anggrek dapat ditemukan di setiap benua kecuali Antartika',
-            '🌺 Satu kapsul anggrek dapat berisi hingga 3 juta biji',
-            '🌺 Beberapa spesies anggrek dapat hidup hingga 100 tahun'
-        ]
-    },
-    'sunflower': {
-        'nama_latin': 'Helianthus annuus',
-        'fakta': [
-            '🌻 Bunga matahari dapat tumbuh hingga 3 meter lebih',
-            '🌻 Bunga matahari muda mengikuti pergerakan matahari (heliotropisme)',
-            '🌻 Kepala bunga matahari terdiri dari ribuan bunga kecil (bunga majemuk)',
-            '🌻 Bunga matahari adalah bunga nasional Ukraina'
-        ]
+        'nama_ilmiah': 'Lilium',
+        'deskripsi': 'Bunga Lily adalah simbol kemurnian dan keanggunan. Bunga ini memiliki kelopak yang besar dan harum yang mekar di musim panas. Lily tersedia dalam berbagai warna seperti putih, kuning, merah muda, dan oranye. Dalam budaya Tiongkok, Lily dipercaya membawa keberuntungan dan kebahagiaan.',
+        'fakta': '🌺 Fakta menarik: Beberapa spesies Lily dapat tumbuh hingga ketinggian 2 meter!'
     },
     'lotus': {
-        'nama_latin': 'Nelumbo nucifera',
-        'fakta': [
-            '🪷 Teratai dapat bertahan hidup hingga 1.000 tahun dalam kondisi kering',
-            '🪷 Bunga teratai suci dalam agama Buddha dan Hindu',
-            '🪷 Meskipun tumbuh di air berlumpur, daun teratai tetap bersih (efek lotus)',
-            '🪷 Biji teratai dapat berkecambah setelah 1.300 tahun'
-        ]
+        'nama_ilmiah': 'Nelumbo nucifera',
+        'deskripsi': 'Teratai atau Lotus adalah bunga sakral yang tumbuh di air. Bunga ini melambangkan kesucian, kebangkitan spiritual, dan kelahiran kembali dalam berbagai budaya Asia. Lotus memiliki kemampuan unik untuk mekar sempurna di atas air meskipun akarnya tertanam di lumpur.',
+        'fakta': '🌺 Fakta menarik: Biji Lotus dapat bertahan hidup hingga 1.300 tahun dan masih bisa tumbuh!'
+    },
+    'rose': {
+        'nama_ilmiah': 'Rosa',
+        'deskripsi': 'Mawar adalah ratunya bunga, melambangkan cinta dan romansa. Bunga ini memiliki duri di batangnya sebagai mekanisme pertahanan alami. Mawar tersedia dalam ribuan varietas dan warna, masing-masing dengan makna simbolis yang berbeda.',
+        'fakta': '🌺 Fakta menarik: Mawar tertua di dunia berusia 1.000 tahun dan masih tumbuh di Katedral Hildesheim, Jerman!'
+    },
+    'tulip': {
+        'nama_ilmiah': 'Tulipa',
+        'deskripsi': 'Tulip adalah bunga musim semi yang berasal dari Asia Tengah. Bunga ini terkenal dengan bentuk cangkirnya yang sempurna dan warna-warna cerah. Tulip menjadi simbol ekonomi saat "Tulip Mania" melanda Belanda pada abad ke-17.',
+        'fakta': '🌺 Fakta menarik: Ada lebih dari 3.000 varietas Tulip yang tercatat di dunia!'
+    },
+    'sunflower': {
+        'nama_ilmiah': 'Helianthus annuus',
+        'deskripsi': 'Bunga Matahari adalah bunga yang selalu menghadap ke arah matahari (heliotropisme). Bunga ini melambangkan kebahagiaan, kesetiaan, dan umur panjang. Bijinya kaya akan nutrisi dan sering dijadikan camilan sehat.',
+        'fakta': '🌺 Fakta menarik: Bunga Matahari dapat tumbuh setinggi 3 meter dan memiliki 1.000-2.000 biji dalam satu kepala bunga!'
+    },
+    'orchid': {
+        'nama_ilmiah': 'Orchidaceae',
+        'deskripsi': 'Anggrek adalah salah satu keluarga bunga terbesar di dunia dengan lebih dari 25.000 spesies. Bunga ini melambangkan keindahan, kekuatan, dan kemewahan. Anggrek memiliki kemampuan adaptasi yang luar biasa dan dapat tumbuh di berbagai habitat.',
+        'fakta': '🌺 Fakta menarik: Anggrek Vanilla adalah satu-satunya anggrek yang menghasilkan buah yang dapat dimakan!'
+    },
+    'daisy': {
+        'nama_ilmiah': 'Bellis perennis',
+        'deskripsi': 'Bunga Aster atau Daisy adalah bunga sederhana yang melambangkan kepolosan dan kesucian. Bunga ini memiliki kelopak putih dengan pusat kuning cerah. Daisy sering digunakan dalam permainan "love me, love me not" dan merupakan simbol persahabatan.',
+        'fakta': '🌺 Fakta menarik: Bunga Daisy sebenarnya adalah gabungan dari dua bunga: bunga cakram di tengah dan bunga sinar di tepi!'
+    },
+    'jasmine': {
+        'nama_ilmiah': 'Jasminum',
+        'deskripsi': 'Melati adalah bunga yang sangat harum dan melambangkan keanggunan, kemurnian, dan kerendahan hati. Bunga ini sering digunakan dalam ritual pernikahan dan keagamaan di berbagai budaya. Minyak melati digunakan dalam industri parfum dan aromaterapi.',
+        'fakta': '🌺 Fakta menarik: Bunga Melati mekar di malam hari dan mengeluarkan aroma yang paling kuat pada waktu itu!'
     }
 }
 
-# ============================================
-# 4. FUNGSI PREDIKSI
-# ============================================
-def preprocess_image(img_file):
-    """Pra-proses gambar untuk prediksi"""
-    try:
-        # Load gambar
-        img = Image.open(img_file)
-        
-        # Konversi ke RGB jika gambar grayscale atau RGBA
-        if img.mode != 'RGB':
-            img = img.convert('RGB')
-        
-        # Resize sesuai input model
-        img = img.resize((224, 224))
-        
-        # Konversi ke array dan normalisasi
-        img_array = np.array(img) / 255.0
-        
-        # Tambahkan batch dimension
-        img_array = np.expand_dims(img_array, axis=0)
-        
-        return img_array, img
-        
-    except Exception as e:
-        st.error(f"Error dalam preprocessing gambar: {str(e)}")
-        return None, None
+def tampilkan_deskripsi_bunga(nama_bunga):
+    """
+    Menampilkan deskripsi lengkap tentang bunga yang diprediksi
+    """
+    nama_bunga_lower = nama_bunga.lower()
+    
+    # Cari deskripsi berdasarkan kata kunci
+    for key, value in bunga_deskripsi.items():
+        if key in nama_bunga_lower or nama_bunga_lower in key:
+            print("\n" + "="*60)
+            print(f"📖 DESKRIPSI BUNGA {nama_bunga.upper()}")
+            print("="*60)
+            print(f"Nama Ilmiah: {value['nama_ilmiah']}")
+            print(f"\n{value['deskripsi']}")
+            print(f"\n{value['fakta']}")
+            print("="*60 + "\n")
+            return
+    
+    # Jika tidak ditemukan dalam dictionary
+    print("\n" + "="*60)
+    print(f"📖 TENTANG BUNGA {nama_bunga.upper()}")
+    print("="*60)
+    print(f"{nama_bunga} adalah bunga yang indah dengan keunikan tersendiri. ")
+    print("Setiap bunga memiliki keindahan dan makna yang berbeda dalam berbagai budaya.")
+    print("="*60 + "\n")
 
-def predict_flower(model, img_file):
-    """Fungsi untuk memprediksi jenis bunga dari gambar"""
-    try:
-        # Pra-proses gambar
-        img_array, original_img = preprocess_image(img_file)
-        if img_array is None:
-            return None, None, None
-        
-        # Prediksi
-        with st.spinner('⏳ Menganalisis gambar dengan model...'):
-            predictions = model.predict(img_array)
-        
-        # Dapatkan kelas dengan probabilitas tertinggi
-        predicted_idx = np.argmax(predictions[0])
-        predicted_class = class_names[predicted_idx]
-        confidence = float(np.max(predictions[0]) * 100)
-        
-        # Hitung probabilitas semua kelas
-        prob_dict = {}
-        for i, name in enumerate(class_names):
-            prob_dict[name] = float(predictions[0][i] * 100)
-        
-        return predicted_class, confidence, prob_dict, original_img
-        
-    except Exception as e:
-        st.error(f"Error dalam prediksi: {str(e)}")
-        return None, None, None, None
+def prediksi_bunga():
+    # Mengunggah gambar
+    uploaded = files.upload()
 
-def display_prediction_result(predicted_class, confidence, prob_dict):
-    """Menampilkan hasil prediksi dengan styling yang lebih baik"""
-    
-    # Tentukan warna berdasarkan confidence
-    if confidence >= 80:
-        status_color = "green"
-        status_emoji = "🎉"
-    elif confidence >= 60:
-        status_color = "orange"
-        status_emoji = "😊"
-    else:
-        status_color = "red"
-        status_emoji = "🤔"
-    
-    # ========== HASIL PREDIKSI ==========
-    st.markdown("---")
-    st.subheader("🎯 Hasil Klasifikasi")
-    
-    col1, col2, col3 = st.columns([2, 2, 1])
-    with col1:
-        st.markdown(f"""
-        <div style='
-            background-color: #e8f5e9; 
-            padding: 20px; 
-            border-radius: 10px;
-            border-left: 5px solid #4caf50;
-        '>
-            <h3 style='margin:0;'>{status_emoji} {predicted_class.upper()}</h3>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.metric("Tingkat Keyakinan", f"{confidence:.2f}%", 
-                 delta="High" if confidence >= 80 else "Medium" if confidence >= 60 else "Low")
-    
-    # ========== FAKTA MENARIK ==========
-    st.markdown("---")
-    st.subheader("📖 Fakta Menarik")
-    
-    bunga_info = BUNGA_DESKRIPSI.get(predicted_class)
-    if bunga_info:
-        st.markdown(f"**Nama Latin:** _{bunga_info['nama_latin']}_")
-        for fakta in bunga_info['fakta']:
-            st.write(fakta)
-    
-    # ========== PROBABILITAS ==========
-    st.markdown("---")
-    st.subheader("📊 Distribusi Probabilitas per Kelas")
-    
-    # Urutkan probabilitas dari tertinggi ke terendah
-    sorted_probs = sorted(prob_dict.items(), key=lambda x: x[1], reverse=True)
-    
-    # Tampilkan progress bar untuk setiap kelas
-    for name, prob in sorted_probs:
-        col1, col2, col3 = st.columns([1.5, 3, 1])
-        with col1:
-            # Tandai yang merupakan prediksi utama
-            if name == predicted_class:
-                st.markdown(f"**👉 {name.capitalize()}**")
-            else:
-                st.write(f"{name.capitalize()}")
-        
-        with col2:
-            # Progress bar dengan warna berbeda
-            if name == predicted_class:
-                st.progress(int(prob) / 100, text=f"{prob:.1f}%")
-            else:
-                st.progress(int(prob) / 100)
-        
-        with col3:
-            st.write(f"{prob:.1f}%")
+    for fn in uploaded.keys():
+        path = fn
+        # Memuat gambar dan mengubah ukurannya sesuai input model
+        img = image.load_img(path, target_size=(224, 224))
 
-# ============================================
-# 5. TAMPILAN WEBSITE
-# ============================================
-def main():
-    # ========== HEADER ==========
-    st.title("🌸 Klasifikasi Jenis Bunga")
-    st.markdown("""
-    <div style='
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 20px; 
-        border-radius: 10px; 
-        margin-bottom: 20px;
-        color: white;
-    '>
-        <p style='font-size: 16px; margin: 0;'>
-        📱 Upload gambar bunga dan sistem akan mengidentifikasi jenisnya 
-        menggunakan teknologi <b>Deep Learning</b>!
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # ========== LOAD MODEL ==========
-    model = load_model()
-    if model is None:
-        st.stop()
-    
-    # ========== UPLOAD FILE ==========
-    uploaded_file = st.file_uploader(
-        "📤 Pilih gambar bunga...",
-        type=['jpg', 'jpeg', 'png'],
-        help="Upload gambar bunga yang ingin diklasifikasi (format: JPG, JPEG, PNG)"
-    )
-    
-    # ========== SESSION STATE ==========
-    # Inisialisasi session state untuk menyimpan hasil prediksi
-    if 'prediction_done' not in st.session_state:
-        st.session_state.prediction_done = False
-        st.session_state.predicted_class = None
-        st.session_state.confidence = None
-        st.session_state.prob_dict = None
-        st.session_state.original_img = None
-    
-    # ========== PROSES GAMBAR ==========
-    if uploaded_file is not None:
-        # Tampilkan gambar yang diupload
-        col1, col2 = st.columns([1, 1])
-        
-        with col1:
-            img_display = Image.open(uploaded_file)
-            st.image(img_display, caption="📷 Gambar yang diupload", use_column_width=True)
-        
-        with col2:
-            # Tombol prediksi dengan callback
-            if st.button("🔍 Klasifikasi!", type="primary", use_container_width=True):
-                # Reset state
-                st.session_state.prediction_done = False
-                
-                # Lakukan prediksi
-                predicted_class, confidence, prob_dict, original_img = predict_flower(
-                    model, uploaded_file
-                )
-                
-                if predicted_class is not None:
-                    # Simpan ke session state
-                    st.session_state.prediction_done = True
-                    st.session_state.predicted_class = predicted_class
-                    st.session_state.confidence = confidence
-                    st.session_state.prob_dict = prob_dict
-                    st.session_state.original_img = original_img
-                    st.rerun()
-        
-        # ========== TAMPILKAN HASIL ==========
-        if st.session_state.prediction_done:
-            display_prediction_result(
-                st.session_state.predicted_class,
-                st.session_state.confidence,
-                st.session_state.prob_dict
-            )
-            
-            # Tombol reset untuk prediksi baru
-            if st.button("🔄 Reset dan Prediksi Ulang", use_container_width=True):
-                st.session_state.prediction_done = False
-                st.session_state.predicted_class = None
-                st.session_state.confidence = None
-                st.session_state.prob_dict = None
-                st.rerun()
-    
-    else:
-        # Tampilkan informasi jika belum upload gambar
-        st.info("📌 Silakan upload gambar bunga terlebih dahulu untuk memulai klasifikasi.")
-        
-        # Tampilkan contoh bunga yang bisa diklasifikasi
-        st.markdown("""
-        <div style='
-            background-color: #f0f2f6; 
-            padding: 15px; 
-            border-radius: 10px;
-            margin-top: 20px;
-        '>
-            <p style='margin: 0; text-align: center;'>
-            🌸 Jenis bunga yang dapat diklasifikasi: 
-            <b>Tulip</b>, <b>Lily</b>, <b>Orchid</b>, <b>Sunflower</b>, dan <b>Lotus</b>
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========== FOOTER ==========
-    st.markdown("---")
-    st.markdown("""
-    <div style='text-align: center; color: #666;'>
-    <p>Made with ❤️ using DenseNet121 Transfer Learning</p>
-    <p style='font-size: 12px;'>Versi 2.0 - Perbaikan Logika</p>
-    </div>
-    """, unsafe_allow_html=True)
+        # Menampilkan gambar yang diunggah
+        plt.figure(figsize=(6, 6))
+        plt.imshow(img)
+        plt.axis('off')
+        plt.title('Gambar Bunga yang Diunggah')
+        plt.show()
 
-# ============================================
-# 6. RUN APLIKASI
-# ============================================
-if __name__ == "__main__":
-    main()
+        # Preprocessing gambar
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        x = x / 255.0  # Normalisasi
+
+        # Melakukan prediksi
+        predictions = model.predict(x)
+        score = tf.nn.softmax(predictions[0])
+
+        # Mendapatkan index kelas dengan probabilitas tertinggi
+        predicted_class_idx = np.argmax(predictions)
+        predicted_class = class_names[predicted_class_idx]
+        akurasi = np.max(predictions) * 100
+
+        # Menampilkan hasil prediksi
+        print("\n" + "="*60)
+        print("🌼 HASIL ANALISIS BUNGA 🌼")
+        print("="*60)
+        print(f"🌸 Nama Bunga: **{predicted_class.upper()}**")
+        print(f"📊 Tingkat Akurasi: {akurasi:.2f}%")
+        print("="*60)
+
+        # Menampilkan deskripsi bunga
+        tampilkan_deskripsi_bunga(predicted_class)
+
+        # Menampilkan top 3 prediksi
+        print("\n🏆 3 Prediksi Teratas:")
+        top_indices = np.argsort(predictions[0])[-3:][::-1]
+        for i, idx in enumerate(top_indices, 1):
+            print(f"   {i}. {class_names[idx]}: {predictions[0][idx]*100:.2f}%")
+
+# Jalankan fungsi ini untuk mengetes sistem
+prediksi_bunga()
