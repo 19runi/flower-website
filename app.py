@@ -530,7 +530,6 @@ st.markdown("""
         ✨ Upload foto bunga dan dapatkan hasil identifikasi instan! ✨
     </div>
     <div class="subtitle" style="font-size: 0.95rem; opacity: 0.7; margin-top: 0.3rem;">
-        Dibangun dengan DenseNet121 & Transfer Learning
     </div>
     <div class="flower-tags">
         <span class="flower-tag">🌷 Tulip</span>
