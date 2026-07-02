@@ -5,7 +5,6 @@ from PIL import Image
 import os
 import requests
 import re
-import gdown
 
 st.set_page_config(
     page_title="Klasifikasi Bunga",
@@ -491,30 +490,31 @@ def load_model():
     
     if os.path.exists(model_path):
         try:
-            # Load model tanpa compile untuk menghindari error optimizer
-            model = tf.keras.models.load_model(model_path, compile=False)
-            return model
-        except Exception as e:
-            st.warning(f"⚠️ Gagal load model existing: {str(e)}. Mengunduh ulang...")
+            # Coba load dengan custom_objects jika ada
+            return tf.keras.models.load_model(model_path, compile=False)
+        except:
             os.remove(model_path)
     
-    with st.spinner('⏳ Mengunduh model (260MB)... Ini mungkin memakan waktu 2-3 menit'):
-        try:
-            # Gunakan gdown untuk download yang lebih reliable
-            url = f'https://drive.google.com/uc?id={file_id}'
-            gdown.download(url, model_path, quiet=False)
-            
-            st.success('✅ Model berhasil diunduh!')
-            model = tf.keras.models.load_model(model_path, compile=False)
-            return model
-        except Exception as e:
-            st.error(f"❌ Gagal mengunduh model: {str(e)}")
-            st.error("Silakan coba lagi atau periksa koneksi internet Anda.")
-            return None
+    with st.spinner('⏳ Mengunduh model...'):
+        url = f'https://drive.google.com/uc?export=download&id={file_id}'
+        r = requests.get(url, stream=True)
+        
+        if 'confirm' in r.text:
+            confirm = re.search(r'confirm=([^&]+)', r.text)
+            if confirm:
+                url = f'https://drive.google.com/uc?export=download&confirm={confirm.group(1)}&id={file_id}'
+                r = requests.get(url, stream=True)
+        
+        with open(model_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+        
+        st.success('✅ Model siap!')
+        return tf.keras.models.load_model(model_path, compile=False)
 
 model = load_model()
 if model is None:
-    st.error("❌ Gagal memuat model. Aplikasi tidak dapat berjalan.")
+    st.error("❌ Gagal load model")
     st.stop()
 
 class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
@@ -527,37 +527,38 @@ emoji_map = {
     'lotus': '🪷'
 }
 
-# ============ PREPROCESSING FUNCTION YANG BENAR ============
+# ============ PREPROCESSING FUNCTION ============
 def preprocess_image(img):
     """
-    Preprocess gambar sesuai dengan training model
+    Preprocess gambar dengan cara yang lebih robust
     """
-    # Resize ke ukuran yang diharapkan model (224x224)
+    # Resize ke 224x224
     img = img.resize((224, 224), Image.Resampling.LANCZOS)
     
-    # Pastikan RGB
+    # Convert ke RGB jika perlu
     if img.mode != 'RGB':
         img = img.convert('RGB')
     
-    # Convert ke array dan normalisasi
+    # Convert ke array
     x = np.array(img, dtype=np.float32)
     
-    # Normalisasi ke [0,1] - INI YANG PALING UMUM
-    x = x / 255.0
+    # Normalisasi yang benar (sesuai dengan training)
+    # Biasanya model DenseNet menggunakan normalisasi [0,1] atau [-1,1]
+    # Coba kedua cara
+    x = x / 255.0  # Normalisasi [0,1]
     
-    # DenseNet121 biasanya menggunakan preprocessing dari tf.keras.applications.densenet
-    # Yang melakukan normalisasi berdasarkan mean dan std ImageNet
-    # Tapi karena model kita mungkin dilatih dengan normalisasi sederhana, kita pakai [0,1]
+    # Alternatif: jika model dilatih dengan preprocessing lain
+    # x = (x - 0.5) / 0.5  # Normalisasi [-1,1]
     
-    # Expand dimensi untuk batch
+    # Expand dims
     x = np.expand_dims(x, axis=0)
     
     return x
 
-# ============ PREDIKSI DENGAN SOFTMAX ============
-def predict_with_softmax(model, x, num_augmentations=5):
+# ============ PREDICTION WITH ENSEMBLE ============
+def predict_with_ensemble(model, x, num_augmentations=3):
     """
-    Prediksi dengan augmentasi dan softmax untuk hasil lebih akurat
+    Melakukan prediksi dengan augmentasi untuk hasil lebih robust
     """
     predictions = []
     
@@ -565,29 +566,18 @@ def predict_with_softmax(model, x, num_augmentations=5):
     pred_original = model.predict(x, verbose=0)
     predictions.append(pred_original)
     
-    # Prediksi dengan variasi augmentasi
+    # Prediksi dengan sedikit augmentasi
     for _ in range(num_augmentations - 1):
-        # Buat variasi gambar
-        x_var = x.copy()
-        
         # Tambahkan noise kecil
-        noise = np.random.normal(0, 0.005, x_var.shape).astype(np.float32)
-        x_var = x_var + noise
-        x_var = np.clip(x_var, 0, 1)
-        
-        # Prediksi
-        pred_var = model.predict(x_var, verbose=0)
-        predictions.append(pred_var)
+        noise = np.random.normal(0, 0.01, x.shape).astype(np.float32)
+        x_noise = x + noise
+        x_noise = np.clip(x_noise, 0, 1)
+        pred_noise = model.predict(x_noise, verbose=0)
+        predictions.append(pred_noise)
     
     # Rata-rata prediksi
     avg_pred = np.mean(predictions, axis=0)
-    
-    # Aplikasikan softmax untuk memastikan probabilitas
-    # (model sudah menggunakan softmax di output layer, tapi kita pastikan)
-    exp_pred = np.exp(avg_pred)
-    softmax_pred = exp_pred / np.sum(exp_pred, axis=-1, keepdims=True)
-    
-    return softmax_pred
+    return avg_pred
 
 # ============ UPLOAD ============
 st.markdown("""
@@ -605,31 +595,27 @@ if uploaded:
     st.image(img, use_column_width=True)
     
     if st.button("🔍 Klasifikasikan!"):
-        with st.spinner("⏳ Memproses gambar..."):
+        with st.spinner("⏳ Memproses..."):
             try:
                 # Preprocess
                 x = preprocess_image(img)
                 
-                # Prediksi dengan softmax
-                pred = predict_with_softmax(model, x)
+                # Prediksi dengan ensemble
+                pred = predict_with_ensemble(model, x)
+                
+                # Debug: print prediksi untuk melihat probabilitas
+                st.write("### Debug - Probabilitas per kelas:")
+                for i, name in enumerate(class_names):
+                    st.write(f"{name}: {pred[0][i]*100:.2f}%")
                 
                 # Ambil hasil
                 idx = np.argmax(pred[0])
                 nama = class_names[idx]
                 akurasi = pred[0][idx] * 100
                 
-                # Tampilkan probabilitas semua kelas untuk debugging
-                with st.expander("📊 Detail Probabilitas"):
-                    for i, name in enumerate(class_names):
-                        prob_value = pred[0][i] * 100
-                        emoji_icon = emoji_map.get(name, '🌸')
-                        st.write(f"{emoji_icon} **{name.capitalize()}**: {prob_value:.2f}%")
-                
-                # Validasi akurasi
-                if akurasi < 40:
-                    st.warning(f"⚠️ Akurasi rendah ({akurasi:.1f}%). Model tidak yakin dengan prediksi ini. Coba upload gambar yang lebih jelas.")
-                elif akurasi < 60:
-                    st.info(f"ℹ️ Akurasi sedang ({akurasi:.1f}%). Hasil mungkin kurang akurat.")
+                # Validasi: jika akurasi terlalu rendah, beri peringatan
+                if akurasi < 50:
+                    st.warning(f"⚠️ Akurasi rendah ({akurasi:.1f}%). Model tidak yakin dengan prediksi ini.")
                 
                 st.session_state['hasil'] = {
                     'nama': nama,
@@ -638,8 +624,7 @@ if uploaded:
                 }
                 
             except Exception as e:
-                st.error(f"❌ Error saat memproses: {str(e)}")
-                st.error("Silakan coba upload gambar lain atau refresh halaman.")
+                st.error(f"❌ Error: {str(e)}")
 
 # ============ HASIL ============
 if 'hasil' in st.session_state:
@@ -716,12 +701,6 @@ if 'hasil' in st.session_state:
         """, unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
-
-# Tombol reset hasil
-if 'hasil' in st.session_state:
-    if st.button("🔄 Reset Hasil"):
-        del st.session_state['hasil']
-        st.rerun()
 
 st.markdown("""
 <div class="footer">
