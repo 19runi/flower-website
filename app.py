@@ -468,7 +468,6 @@ st.markdown("""
     <div class="icon">🌿</div>
     <h1>Klasifikasi Bunga</h1>
     <p>Upload gambar untuk mengetahui jenis bunganya secara instan ✨</p>
-    <span class="badge">🤖 Didukung AI</span>
 </div>
 """, unsafe_allow_html=True)
 
