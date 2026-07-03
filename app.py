@@ -5,6 +5,7 @@ from PIL import Image
 import os
 import requests
 import re
+import gdown
 
 st.set_page_config(
     page_title="Identifikasi Bunga",
@@ -369,22 +370,22 @@ st.markdown("""
 
 # ============ DATABASE ============
 BUNGA_DESKRIPSI = {
-    'tulip': {
-        'nama_latin': 'Tulipa',
-        'fakta': [
-            '🌷 Tulip berasal dari Asia Tengah',
-            '🌷 Ada lebih dari 3.000 varietas tulip',
-            '🌷 Warna merah = cinta, kuning = kegembiraan',
-            '🌷 Belanda pernah mengalami "Tulip Mania"'
-        ]
-    },
     'lily': {
         'nama_latin': 'Lilium',
         'fakta': [
             '🌸 Lily sudah ada sejak 3.000 tahun SM',
             '🌸 Memiliki 6 kelopak bunga',
-            '🌸 Melambangkan kemurnian',
-            '🌸 Bunga dewi Hera di Yunani kuno'
+            '🌸 Melambangkan kemurnian dan keanggunan',
+            '🌸 Bunga dewi Hera dalam mitologi Yunani kuno'
+        ]
+    },
+    'lotus': {
+        'nama_latin': 'Nelumbo nucifera',
+        'fakta': [
+            '🪷 Bisa hidup 1.000 tahun dalam kondisi kering',
+            '🪷 Suci dalam agama Buddha dan Hindu',
+            '🪷 Tetap bersih meski di air berlumpur',
+            '🪷 Biji bisa berkecambah setelah 1.300 tahun'
         ]
     },
     'orchid': {
@@ -400,18 +401,18 @@ BUNGA_DESKRIPSI = {
         'nama_latin': 'Helianthus annuus',
         'fakta': [
             '🌻 Bisa tumbuh hingga 3 meter',
-            '🌻 Mengikuti pergerakan matahari',
+            '🌻 Mengikuti pergerakan matahari (heliotropisme)',
             '🌻 Terdiri dari ribuan bunga kecil',
             '🌻 Bunga nasional Ukraina'
         ]
     },
-    'lotus': {
-        'nama_latin': 'Nelumbo nucifera',
+    'tulip': {
+        'nama_latin': 'Tulipa',
         'fakta': [
-            '🪷 Bisa hidup 1.000 tahun dalam kondisi kering',
-            '🪷 Suci dalam agama Buddha dan Hindu',
-            '🪷 Tetap bersih meski di air berlumpur',
-            '🪷 Biji bisa berkecambah setelah 1.300 tahun'
+            '🌷 Tulip berasal dari Asia Tengah',
+            '🌷 Ada lebih dari 3.000 varietas tulip',
+            '🌷 Warna merah = cinta, kuning = kegembiraan',
+            '🌷 Belanda pernah mengalami "Tulip Mania"'
         ]
     }
 }
@@ -480,20 +481,23 @@ if model is None:
     st.stop()
 
 # ============ CLASS NAMES ============
-class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
+# PERBAIKAN: Urutan class names sesuai dengan training model
+# Model dilatih dengan urutan: lily, lotus, orchid, sunflower, tulip
+class_names = ['lily', 'lotus', 'orchid', 'sunflower', 'tulip']
 
 emoji_map = {
-    'tulip': '🌷',
     'lily': '🌸',
+    'lotus': '🪷',
     'orchid': '🌺',
     'sunflower': '🌻',
-    'lotus': '🪷'
+    'tulip': '🌷'
 }
 
 # ============ PREPROCESSING FUNCTION ============
 def preprocess_image(img):
     """
     Preprocess gambar untuk DenseNet121
+    Normalisasi yang benar untuk DenseNet121 di TensorFlow
     """
     try:
         # Resize ke 224x224
@@ -506,9 +510,8 @@ def preprocess_image(img):
         # Convert ke array
         x = np.array(img, dtype=np.float32)
         
-        # Normalisasi sesuai DenseNet121
-        # DenseNet121 di TensorFlow menggunakan normalisasi [-1, 1]
-        x = (x / 127.5) - 1.0
+        # Normalisasi ke [0, 1] - standar untuk DenseNet121 di TensorFlow
+        x = x / 255.0
         
         # Expand dims untuk batch
         x = np.expand_dims(x, axis=0)
@@ -528,14 +531,20 @@ def predict_flower(model, x):
         # Prediksi
         predictions = model.predict(x, verbose=0)
         
-        # Softmax untuk probabilitas
-        predictions = tf.nn.softmax(predictions[0]).numpy()
+        # Pastikan output adalah probabilitas
+        # Jika output masih logits, terapkan softmax
+        prob = predictions[0]
+        
+        # Cek apakah sudah probabilitas (jumlah = 1)
+        if np.sum(prob) > 1.1 or np.sum(prob) < 0.9:
+            # Terapkan softmax jika belum
+            prob = tf.nn.softmax(prob).numpy()
         
         # Ambil top prediction
-        top_idx = np.argmax(predictions)
-        top_confidence = predictions[top_idx] * 100
+        top_idx = np.argmax(prob)
+        top_confidence = prob[top_idx] * 100
         
-        return top_idx, top_confidence, predictions
+        return top_idx, top_confidence, prob
         
     except Exception as e:
         st.error(f"❌ Error prediction: {str(e)}")
