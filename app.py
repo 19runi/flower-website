@@ -520,7 +520,6 @@ st.markdown("""
     <div class="emoji-row">🌸 🌺 🌷 🌻 🪷</div>
     <h1>🌸 Identifikasi Bunga 🌸</h1>
     <div class="subtitle">
-        ✨ Upload foto bunga dan dapatkan hasil identifikasi instan! ✨
     </div>
     <div class="subtitle" style="font-size: 0.95rem; opacity: 0.7; margin-top: 0.3rem;">
     </div>
