@@ -523,13 +523,6 @@ st.markdown("""
     </div>
     <div class="subtitle" style="font-size: 0.95rem; opacity: 0.7; margin-top: 0.3rem;">
     </div>
-    <div class="flower-tags">
-        <span class="flower-tag">🌷 Tulip</span>
-        <span class="flower-tag">🌸 Lily</span>
-        <span class="flower-tag">🌺 Orchid</span>
-        <span class="flower-tag">🌻 Sunflower</span>
-        <span class="flower-tag">🪷 Lotus</span>
-    </div>
 </div>
 """, unsafe_allow_html=True)
 
