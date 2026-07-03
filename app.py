@@ -8,9 +8,10 @@ import re
 
 st.set_page_config(
     page_title="Identifikasi Bunga",
-    layout="centered"
+    page_icon="🌺", 
+    layout="centered",
+    initial_sidebar_state="collapsed"  
 )
-
 # CSS 
 st.markdown("""
 <style>
