@@ -5,26 +5,25 @@ from PIL import Image
 import os
 import requests
 import re
+import gdown
 
 st.set_page_config(
     page_title="Identifikasi Bunga",
     layout="centered"
 )
-# CSS 
+
+# ============ CSS ============
 st.markdown("""
 <style>
-    /* Background utama dengan gradien yang lebih halus */
     .stApp {
         background: linear-gradient(145deg, #faf0f5 0%, #fce4ec 50%, #f3e5f5 100%);
         font-family: 'Segoe UI', 'Quicksand', sans-serif;
     }
     
-    /* Menyembunyikan elemen default Streamlit */
     .css-1d391kg, .css-1lcbmhc, .stSidebar, #MainMenu, header, footer {
         display: none !important;
     }
     
-    /* Custom upload button */
     .stFileUploader > div > button {
         font-family: 'Segoe UI', 'Quicksand', sans-serif !important;
         font-weight: 600 !important;
@@ -46,7 +45,6 @@ st.markdown("""
         background: linear-gradient(135deg, #c2185b, #880e4f) !important;
     }
     
-    /* Header utama - lebih elegan */
     .header {
         text-align: center;
         padding: 2.8rem 2rem 2.2rem 2rem;
@@ -58,31 +56,6 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.6);
         position: relative;
         overflow: hidden;
-    }
-    
-    .header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle at 30% 50%, rgba(233, 30, 99, 0.03), transparent 70%);
-        pointer-events: none;
-    }
-    
-    .header .emoji-row {
-        font-size: 3.2rem;
-        letter-spacing: 15px;
-        margin-bottom: 0.8rem;
-        animation: float 3s ease-in-out infinite;
-        position: relative;
-        z-index: 1;
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-8px); }
     }
     
     .header h1 {
@@ -100,6 +73,12 @@ st.markdown("""
         z-index: 1;
         letter-spacing: 2px;
     }
+    
+    @keyframes shimmer {
+        0% { background-position: 0% center; }
+        100% { background-position: 200% center; }
+    }
+    
     .header .subtitle {
         font-family: 'Quicksand', 'Segoe UI', sans-serif;
         font-size: 1.15rem;
@@ -112,89 +91,6 @@ st.markdown("""
         line-height: 1.8;
     }
     
-    .header .flower-tags {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-        margin: 1rem 0 0.5rem 0;
-        position: relative;
-        z-index: 1;
-    }
-    
-    .header .flower-tag {
-        display: inline-block;
-        font-family: 'Quicksand', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 600;
-        padding: 0.4rem 1.2rem;
-        border-radius: 50px;
-        background: linear-gradient(135deg, #fce4ec, #f8bbd0);
-        color: #880e4f;
-        border: 1px solid rgba(233, 30, 99, 0.1);
-        transition: all 0.3s ease;
-    }
-    
-    .header .flower-tag:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(233, 30, 99, 0.15);
-        background: linear-gradient(135deg, #f8bbd0, #f48fb1);
-    }
-    
-    /* Upload area - lebih modern */
-    .upload-area {
-        background: rgba(255, 255, 255, 0.92);
-        padding: 3.5rem 2rem;
-        border-radius: 30px;
-        border: 2.5px dashed #e91e63;
-        text-align: center;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 8px 40px rgba(233, 30, 99, 0.06);
-        transition: all 0.4s ease;
-        margin-bottom: 0rem;
-        position: relative;
-    }
-    
-    .upload-area:hover {
-        background: rgba(255, 255, 255, 0.97);
-        border-color: #c2185b;
-        transform: translateY(-5px);
-        box-shadow: 0 12px 50px rgba(233, 30, 99, 0.12);
-    }
-    
-    .upload-area .upload-icon {
-        font-size: 4rem;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-    
-    .upload-area .main-text {
-        font-family: 'Quicksand', 'Segoe UI', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #4a1942;
-        margin: 0.5rem 0 0.3rem 0;
-    }
-    
-    .upload-area .sub-text {
-        font-family: 'Quicksand', 'Segoe UI', sans-serif;
-        font-size: 1rem;
-        color: #6b3a5a;
-        margin: 0.3rem 0;
-        font-weight: 400;
-        opacity: 0.7;
-    }
-    
-    .upload-area .info-text {
-        font-family: 'Quicksand', 'Segoe UI', sans-serif;
-        font-size: 0.85rem;
-        color: #8b5a7a;
-        margin-top: 0.5rem;
-        font-weight: 400;
-        opacity: 0.6;
-    }
-    
-    /* Result box - lebih elegan */
     .result-box {
         background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(252,228,236,0.95));
         padding: 2.8rem 2.5rem;
@@ -206,18 +102,6 @@ st.markdown("""
         animation: fadeInUp 0.7s ease;
         position: relative;
         overflow: hidden;
-    }
-    
-    .result-box::before {
-        content: '';
-        position: absolute;
-        top: -30%;
-        right: -30%;
-        width: 60%;
-        height: 60%;
-        background: radial-gradient(circle, rgba(233, 30, 99, 0.05), transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
     }
     
     @keyframes fadeInUp {
@@ -279,7 +163,6 @@ st.markdown("""
         margin: 0;
     }
     
-    /* Info cards - lebih rapi */
     .info-card {
         background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(252,228,236,0.93));
         padding: 2rem;
@@ -294,10 +177,6 @@ st.markdown("""
         align-items: center;
         gap: 14px;
         margin-bottom: 0.8rem;
-    }
-    
-    .info-card .title-icon {
-        font-size: 2rem;
     }
     
     .info-card .title {
@@ -356,7 +235,6 @@ st.markdown("""
         min-width: 36px;
     }
     
-    /* Probability bars - lebih modern */
     .prob-card {
         background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(252,228,236,0.93));
         padding: 2rem;
@@ -371,10 +249,6 @@ st.markdown("""
         align-items: center;
         gap: 14px;
         margin-bottom: 1.5rem;
-    }
-    
-    .prob-card .title-icon {
-        font-size: 2rem;
     }
     
     .prob-card .title {
@@ -440,41 +314,11 @@ st.markdown("""
         position: relative;
     }
     
-    .prob-item .bar .fill::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        animation: shimmerBar 2s infinite;
-    }
-    
-    @keyframes shimmerBar {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
-    }
-    
     .prob-item:nth-child(1) .fill { background: linear-gradient(90deg, #e91e63, #c2185b); }
     .prob-item:nth-child(2) .fill { background: linear-gradient(90deg, #f06292, #e91e63); }
     .prob-item:nth-child(3) .fill { background: linear-gradient(90deg, #ba68c8, #9c27b0); }
     .prob-item:nth-child(4) .fill { background: linear-gradient(90deg, #ffd54f, #ffb300); }
     .prob-item:nth-child(5) .fill { background: linear-gradient(90deg, #4dd0e1, #00acc1); }
-    
-    .image-preview {
-        border-radius: 25px;
-        overflow: hidden;
-        box-shadow: 0 10px 40px rgba(233, 30, 99, 0.08);
-        border: 3px solid rgba(255, 255, 255, 0.8);
-        margin: 1.5rem 0;
-        transition: all 0.3s ease;
-    }
-    
-    .image-preview:hover {
-        transform: scale(1.01);
-        box-shadow: 0 15px 50px rgba(233, 30, 99, 0.12);
-    }
     
     .stButton > button {
         width: 100%;
@@ -516,7 +360,6 @@ st.markdown("""
 # ============ HEADER ============
 st.markdown("""
 <div class="header">
-    <div class="emoji-row">🌸 🌺 🌷 🌻 🪷</div>
     <h1>Identifikasi Bunga</h1>
     <div class="subtitle">
         Unggah foto bunga dan dapatkan hasil identifikasi secara instan
@@ -582,35 +425,61 @@ def load_model():
     model_path = 'model_bunga_densenet121.h5'
     file_id = "12ZJi1HbkI8ian7fWM0K98ADi1tpMvU4y"
     
-    if os.path.exists(model_path):
+    try:
+        # Cek apakah model sudah ada
+        if os.path.exists(model_path):
+            st.info("📂 Memuat model dari lokal...")
+            try:
+                model = tf.keras.models.load_model(model_path, compile=False)
+                st.success("✅ Model berhasil dimuat dari lokal!")
+                return model
+            except Exception as e:
+                st.warning(f"⚠️ Gagal memuat model lokal: {str(e)}")
+                os.remove(model_path)  # Hapus file corrupt
+        
+        # Download model dari Google Drive
+        st.info("📥 Mengunduh model dari Google Drive...")
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        # Gunakan gdown untuk download
+        url = f'https://drive.google.com/uc?id={file_id}'
+        gdown.download(url, model_path, quiet=False)
+        
+        progress_bar.progress(100)
+        status_text.text("✅ Download selesai!")
+        
+        # Load model
+        st.info("🔄 Memuat model...")
+        model = tf.keras.models.load_model(model_path, compile=False)
+        st.success("✅ Model berhasil dimuat!")
+        return model
+        
+    except Exception as e:
+        st.error(f"❌ Gagal memuat model: {str(e)}")
+        st.error("Pastikan file model tersedia dan koneksi internet stabil.")
+        
+        # Fallback: coba load dengan custom_objects
         try:
-            # Coba load dengan custom_objects jika ada
-            return tf.keras.models.load_model(model_path, compile=False)
+            custom_objects = {
+                'Functional': tf.keras.models.Model,
+                'Sequential': tf.keras.models.Sequential
+            }
+            model = tf.keras.models.load_model(model_path, compile=False, custom_objects=custom_objects)
+            st.warning("⚠️ Model dimuat dengan custom_objects fallback.")
+            return model
         except:
-            os.remove(model_path)
-    
-    with st.spinner('⏳ Mengunduh model...'):
-        url = f'https://drive.google.com/uc?export=download&id={file_id}'
-        r = requests.get(url, stream=True)
-        
-        if 'confirm' in r.text:
-            confirm = re.search(r'confirm=([^&]+)', r.text)
-            if confirm:
-                url = f'https://drive.google.com/uc?export=download&confirm={confirm.group(1)}&id={file_id}'
-                r = requests.get(url, stream=True)
-        
-        with open(model_path, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                f.write(chunk)
-        
-        st.success('✅ Model siap!')
-        return tf.keras.models.load_model(model_path, compile=False)
+            return None
 
-model = load_model()
+# Load model
+with st.spinner("⏳ Sedang memuat model..."):
+    model = load_model()
+
 if model is None:
-    st.error("❌ Gagal load model")
+    st.error("❌ Gagal memuat model. Silakan restart aplikasi.")
     st.stop()
 
+# ============ CLASS NAMES ============
 class_names = ['tulip', 'lily', 'orchid', 'sunflower', 'lotus']
 
 emoji_map = {
@@ -624,88 +493,94 @@ emoji_map = {
 # ============ PREPROCESSING FUNCTION ============
 def preprocess_image(img):
     """
-    Preprocess gambar dengan cara yang lebih robust
+    Preprocess gambar untuk DenseNet121
     """
-    # Resize ke 224x224
-    img = img.resize((224, 224), Image.Resampling.LANCZOS)
-    
-    # Convert ke RGB jika perlu
-    if img.mode != 'RGB':
-        img = img.convert('RGB')
-    
-    # Convert ke array
-    x = np.array(img, dtype=np.float32)
-    
-    # Normalisasi yang benar (sesuai dengan training)
-    # Biasanya model DenseNet menggunakan normalisasi [0,1] atau [-1,1]
-    # Coba kedua cara
-    x = x / 255.0  # Normalisasi [0,1]
-    
-    # Alternatif: jika model dilatih dengan preprocessing lain
-    # x = (x - 0.5) / 0.5  # Normalisasi [-1,1]
-    
-    # Expand dims
-    x = np.expand_dims(x, axis=0)
-    
-    return x
+    try:
+        # Resize ke 224x224
+        img = img.resize((224, 224), Image.Resampling.LANCZOS)
+        
+        # Convert ke RGB
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        
+        # Convert ke array
+        x = np.array(img, dtype=np.float32)
+        
+        # Normalisasi sesuai DenseNet121
+        # DenseNet121 di TensorFlow menggunakan normalisasi [-1, 1]
+        x = (x / 127.5) - 1.0
+        
+        # Expand dims untuk batch
+        x = np.expand_dims(x, axis=0)
+        
+        return x
+        
+    except Exception as e:
+        st.error(f"❌ Error preprocessing: {str(e)}")
+        return None
 
-# ============ PREDICTION WITH ENSEMBLE ============
-def predict_with_ensemble(model, x, num_augmentations=3):
+# ============ PREDICTION ============
+def predict_flower(model, x):
     """
-    Melakukan prediksi dengan augmentasi untuk hasil lebih robust
+    Melakukan prediksi dengan confidence check
     """
-    predictions = []
-    
-    # Prediksi original
-    pred_original = model.predict(x, verbose=0)
-    predictions.append(pred_original)
-    
-    # Prediksi dengan sedikit augmentasi
-    for _ in range(num_augmentations - 1):
-        # Tambahkan noise kecil
-        noise = np.random.normal(0, 0.01, x.shape).astype(np.float32)
-        x_noise = x + noise
-        x_noise = np.clip(x_noise, 0, 1)
-        pred_noise = model.predict(x_noise, verbose=0)
-        predictions.append(pred_noise)
-    
-    # Rata-rata prediksi
-    avg_pred = np.mean(predictions, axis=0)
-    return avg_pred
+    try:
+        # Prediksi
+        predictions = model.predict(x, verbose=0)
+        
+        # Softmax untuk probabilitas
+        predictions = tf.nn.softmax(predictions[0]).numpy()
+        
+        # Ambil top prediction
+        top_idx = np.argmax(predictions)
+        top_confidence = predictions[top_idx] * 100
+        
+        return top_idx, top_confidence, predictions
+        
+    except Exception as e:
+        st.error(f"❌ Error prediction: {str(e)}")
+        return None, None, None
 
 # ============ UPLOAD ============
 uploaded = st.file_uploader("", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
 
 if uploaded:
-    img = Image.open(uploaded)
-    st.image(img, use_column_width=True)
-    
-    if st.button("🔍 Klasifikasikan!"):
-        with st.spinner("⏳ Memproses..."):
-            try:
+    try:
+        # Baca gambar
+        img = Image.open(uploaded)
+        
+        # Tampilkan gambar
+        st.image(img, use_column_width=True)
+        
+        # Tombol klasifikasi
+        if st.button("🔍 Klasifikasikan!"):
+            with st.spinner("⏳ Memproses gambar..."):
                 # Preprocess
                 x = preprocess_image(img)
                 
-                # Prediksi dengan ensemble
-                pred = predict_with_ensemble(model, x)
-                
-                # Ambil hasil
-                idx = np.argmax(pred[0])
-                nama = class_names[idx]
-                akurasi = pred[0][idx] * 100
-                
-                # Validasi: jika akurasi terlalu rendah, beri peringatan
-                if akurasi < 50:
-                    st.warning(f"⚠️ Akurasi rendah ({akurasi:.1f}%). Model tidak yakin dengan prediksi ini.")
-                
-                st.session_state['hasil'] = {
-                    'nama': nama,
-                    'akurasi': akurasi,
-                    'probabilitas': pred[0]
-                }
-                
-            except Exception as e:
-                st.error(f"❌ Error: {str(e)}")
+                if x is not None:
+                    # Prediksi
+                    idx, akurasi, prob = predict_flower(model, x)
+                    
+                    if idx is not None:
+                        nama = class_names[idx]
+                        
+                        # Validasi confidence
+                        if akurasi < 50:
+                            st.warning(f"⚠️ Akurasi rendah ({akurasi:.1f}%). Model tidak yakin dengan prediksi ini.")
+                        
+                        # Simpan hasil
+                        st.session_state['hasil'] = {
+                            'nama': nama,
+                            'akurasi': akurasi,
+                            'probabilitas': prob,
+                            'idx': idx
+                        }
+                        
+                        st.balloons()
+                        
+    except Exception as e:
+        st.error(f"❌ Error processing image: {str(e)}")
 
 # ============ HASIL ============
 if 'hasil' in st.session_state:
@@ -713,9 +588,11 @@ if 'hasil' in st.session_state:
     nama = hasil['nama']
     akurasi = hasil['akurasi']
     prob = hasil['probabilitas']
+    idx = hasil['idx']
     
     emoji = emoji_map.get(nama, '🌸')
     
+    # Tampilkan hasil
     st.markdown(f"""
     <div class="result-box">
         <p class="label">✨ Hasil Klasifikasi</p>
@@ -726,6 +603,7 @@ if 'hasil' in st.session_state:
     </div>
     """, unsafe_allow_html=True)
     
+    # Informasi bunga
     info = get_deskripsi(nama)
     if info:
         st.markdown(f"""
@@ -739,18 +617,19 @@ if 'hasil' in st.session_state:
             </div>
         """, unsafe_allow_html=True)
         
-        for i, fact in enumerate(info['fakta'], 1):
+        for fact in info['fakta']:
             icon = fact.split()[0] if ' ' in fact else '🌸'
             text = fact.replace(icon, '').strip()
             st.markdown(f"""
             <div class="fact">
                 <span class="fact-icon">{icon}</span>
-                <span><span class="fact-number">{i}</span> {text}</span>
+                <span>{text}</span>
             </div>
             """, unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
     
+    # Probabilitas
     st.markdown("""
     <div class="prob-card">
         <div class="title-wrapper">
@@ -759,11 +638,12 @@ if 'hasil' in st.session_state:
         </div>
     """, unsafe_allow_html=True)
     
+    # Sort by probability
     sorted_indices = np.argsort(prob)[::-1]
     
-    for idx in sorted_indices:
-        name = class_names[idx]
-        prob_value = prob[idx] * 100
+    for i in sorted_indices:
+        name = class_names[i]
+        prob_value = prob[i] * 100
         emoji_icon = emoji_map.get(name, '🌸')
         
         st.markdown(f"""
@@ -782,6 +662,11 @@ if 'hasil' in st.session_state:
         """, unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Tombol reset
+    if st.button("🔄 Reset"):
+        del st.session_state['hasil']
+        st.rerun()
 
 st.markdown("""
 <div class="footer">
