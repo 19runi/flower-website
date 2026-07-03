@@ -516,6 +516,7 @@ st.markdown("""
 # ============ HEADER ============
 st.markdown("""
 <div class="header">
+    <div class="emoji-row">🌸 🌺 🌷 🌻 🪷</div>
     <h1>Identifikasi Bunga</h1>
     <div class="subtitle">
         Unggah foto bunga dan dapatkan hasil identifikasi secara instan
