@@ -8,7 +8,6 @@ import re
 
 st.set_page_config(
     page_title="Identifikasi Bunga",
-    page_icon="🌸",
     layout="centered"
 )
 
