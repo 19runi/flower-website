@@ -5,7 +5,6 @@ from PIL import Image
 import os
 import requests
 import re
-import gdown
 
 st.set_page_config(
     page_title="Identifikasi Bunga",
