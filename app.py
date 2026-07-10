@@ -5,7 +5,7 @@ from PIL import Image
 import os
 import requests
 import re
-import gdown
+import gdown  # TAMBAHKAN INI - import gdown untuk download dari Google Drive
 
 st.set_page_config(
     page_title="Identifikasi Bunga",
@@ -443,18 +443,33 @@ def load_model():
         progress_bar = st.progress(0)
         status_text = st.empty()
         
-        # Gunakan gdown untuk download
+        # PERBAIKAN: Gunakan gdown untuk download dengan output status
         url = f'https://drive.google.com/uc?id={file_id}'
-        gdown.download(url, model_path, quiet=False)
         
-        progress_bar.progress(100)
-        status_text.text("✅ Download selesai!")
+        # Cek apakah gdown tersedia
+        try:
+            # Download file
+            gdown.download(url, model_path, quiet=False)
+            progress_bar.progress(100)
+            status_text.text("✅ Download selesai!")
+        except Exception as e:
+            st.error(f"❌ Gagal mengunduh: {str(e)}")
+            st.info("💡 Pastikan gdown terinstal. Jalankan: pip install gdown")
+            return None
         
         # Load model
         st.info("🔄 Memuat model...")
         model = tf.keras.models.load_model(model_path, compile=False)
         st.success("✅ Model berhasil dimuat!")
         return model
+        
+    except ImportError as e:
+        st.error("❌ Modul 'gdown' tidak ditemukan!")
+        st.info("💡 Silakan install gdown terlebih dahulu:\n")
+        st.code("pip install gdown", language="bash")
+        st.info("Atau jika menggunakan pip3:\n")
+        st.code("pip3 install gdown", language="bash")
+        return None
         
     except Exception as e:
         st.error(f"❌ Gagal memuat model: {str(e)}")
