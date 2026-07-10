@@ -5,7 +5,7 @@ from PIL import Image
 import os
 import requests
 import re
-import gdown  # TAMBAHKAN INI - import gdown untuk download dari Google Drive
+import gdown
 
 st.set_page_config(
     page_title="Identifikasi Bunga",
@@ -436,19 +436,16 @@ def load_model():
                 return model
             except Exception as e:
                 st.warning(f"⚠️ Gagal memuat model lokal: {str(e)}")
-                os.remove(model_path)  # Hapus file corrupt
+                os.remove(model_path)
         
         # Download model dari Google Drive
         st.info("📥 Mengunduh model dari Google Drive...")
         progress_bar = st.progress(0)
         status_text = st.empty()
         
-        # PERBAIKAN: Gunakan gdown untuk download dengan output status
         url = f'https://drive.google.com/uc?id={file_id}'
         
-        # Cek apakah gdown tersedia
         try:
-            # Download file
             gdown.download(url, model_path, quiet=False)
             progress_bar.progress(100)
             status_text.text("✅ Download selesai!")
@@ -457,7 +454,6 @@ def load_model():
             st.info("💡 Pastikan gdown terinstal. Jalankan: pip install gdown")
             return None
         
-        # Load model
         st.info("🔄 Memuat model...")
         model = tf.keras.models.load_model(model_path, compile=False)
         st.success("✅ Model berhasil dimuat!")
@@ -467,15 +463,12 @@ def load_model():
         st.error("❌ Modul 'gdown' tidak ditemukan!")
         st.info("💡 Silakan install gdown terlebih dahulu:\n")
         st.code("pip install gdown", language="bash")
-        st.info("Atau jika menggunakan pip3:\n")
-        st.code("pip3 install gdown", language="bash")
         return None
         
     except Exception as e:
         st.error(f"❌ Gagal memuat model: {str(e)}")
         st.error("Pastikan file model tersedia dan koneksi internet stabil.")
         
-        # Fallback: coba load dengan custom_objects
         try:
             custom_objects = {
                 'Functional': tf.keras.models.Model,
@@ -495,11 +488,90 @@ if model is None:
     st.error("❌ Gagal memuat model. Silakan restart aplikasi.")
     st.stop()
 
-# ============ CLASS NAMES ============
-# PERBAIKAN: Urutan class names sesuai dengan training model
-# Model dilatih dengan urutan: lily, lotus, orchid, sunflower, tulip
-class_names = ['lily', 'lotus', 'orchid', 'sunflower', 'tulip']
+# ============ DETEKSI JUMLAH KELAS ============
+try:
+    dummy_input = np.zeros((1, 224, 224, 3))
+    dummy_pred = model.predict(dummy_input, verbose=0)
+    num_classes = dummy_pred.shape[1]
+    st.sidebar.success(f"✅ Model memiliki {num_classes} kelas")
+except:
+    num_classes = 5
 
+# ============ CLASS NAMES ============
+# SEMUA KEMUNGKINAN URUTAN UNTUK 5 BUNGA
+POSSIBLE_ORDERS = [
+    ['lily', 'lotus', 'orchid', 'sunflower', 'tulip'],  # Urutan alfabetis
+    ['lily', 'lotus', 'orchid', 'tulip', 'sunflower'],
+    ['lotus', 'lily', 'orchid', 'sunflower', 'tulip'],
+    ['orchid', 'lily', 'lotus', 'sunflower', 'tulip'],
+    ['sunflower', 'tulip', 'orchid', 'lotus', 'lily'],
+    ['tulip', 'sunflower', 'orchid', 'lotus', 'lily'],
+    ['lily', 'orchid', 'lotus', 'sunflower', 'tulip'],
+    ['lotus', 'orchid', 'lily', 'sunflower', 'tulip'],
+]
+
+# DEFAULT: Gunakan urutan alfabetis
+default_order = ['lily', 'lotus', 'orchid', 'sunflower', 'tulip']
+
+# ============ DEBUG MODE DI SIDEBAR ============
+with st.sidebar:
+    st.markdown("### 🔧 Debug Mode")
+    st.markdown("---")
+    
+    # Pilihan urutan kelas
+    order_options = [str(order) for order in POSSIBLE_ORDERS]
+    selected_order_str = st.selectbox(
+        "Pilih Urutan Kelas",
+        options=order_options,
+        index=0
+    )
+    
+    # Konversi string ke list
+    if selected_order_str:
+        try:
+            class_names = eval(selected_order_str)
+            st.info(f"✅ Menggunakan: {class_names}")
+        except:
+            class_names = default_order
+            st.warning("⚠️ Menggunakan urutan default")
+    
+    st.markdown("---")
+    
+    # Upload gambar untuk testing
+    test_file = st.file_uploader("Upload test image", type=['jpg', 'png', 'jpeg'])
+    
+    if test_file:
+        test_img = Image.open(test_file)
+        st.image(test_img, width=150)
+        
+        # Preprocess
+        x = preprocess_image(test_img)
+        if x is not None:
+            pred = model.predict(x, verbose=0)[0]
+            top_idx = np.argmax(pred)
+            top_conf = pred[top_idx] * 100
+            
+            st.write("### 📊 Hasil Testing:")
+            st.write(f"**Indeks teratas:** {top_idx}")
+            st.write(f"**Confidence:** {top_conf:.1f}%")
+            
+            st.markdown("---")
+            
+            # Tampilkan semua kemungkinan urutan
+            st.write("### 🔄 Semua Kemungkinan:")
+            for order in POSSIBLE_ORDERS:
+                name = order[top_idx] if top_idx < len(order) else f'class_{top_idx}'
+                emoji = emoji_map.get(name, '🌸')
+                # Tandai yang benar
+                if name == 'tulip':
+                    st.success(f"✅ {emoji} **{order}** → {name} ({top_conf:.1f}%)")
+                else:
+                    st.write(f"{emoji} **{order}** → {name} ({top_conf:.1f}%)")
+            
+            st.markdown("---")
+            st.info("💡 Pilih urutan yang menghasilkan nama bunga yang benar!")
+
+# ============ EMOJI MAP ============
 emoji_map = {
     'lily': '🌸',
     'lotus': '🪷',
@@ -512,7 +584,6 @@ emoji_map = {
 def preprocess_image(img):
     """
     Preprocess gambar untuk DenseNet121
-    Normalisasi yang benar untuk DenseNet121 di TensorFlow
     """
     try:
         # Resize ke 224x224
@@ -525,7 +596,7 @@ def preprocess_image(img):
         # Convert ke array
         x = np.array(img, dtype=np.float32)
         
-        # Normalisasi ke [0, 1] - standar untuk DenseNet121 di TensorFlow
+        # Normalisasi ke [0, 1]
         x = x / 255.0
         
         # Expand dims untuk batch
@@ -547,7 +618,6 @@ def predict_flower(model, x):
         predictions = model.predict(x, verbose=0)
         
         # Pastikan output adalah probabilitas
-        # Jika output masih logits, terapkan softmax
         prob = predictions[0]
         
         # Cek apakah sudah probabilitas (jumlah = 1)
@@ -587,7 +657,7 @@ if uploaded:
                     idx, akurasi, prob = predict_flower(model, x)
                     
                     if idx is not None:
-                        nama = class_names[idx]
+                        nama = class_names[idx] if idx < len(class_names) else f'class_{idx}'
                         
                         # Validasi confidence
                         if akurasi < 50:
@@ -652,6 +722,8 @@ if 'hasil' in st.session_state:
             """, unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        st.warning(f"⚠️ Informasi untuk '{nama}' belum tersedia di database.")
     
     # Probabilitas
     st.markdown("""
@@ -666,7 +738,7 @@ if 'hasil' in st.session_state:
     sorted_indices = np.argsort(prob)[::-1]
     
     for i in sorted_indices:
-        name = class_names[i]
+        name = class_names[i] if i < len(class_names) else f'class_{i}'
         prob_value = prob[i] * 100
         emoji_icon = emoji_map.get(name, '🌸')
         
